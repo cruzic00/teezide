@@ -1,0 +1,145 @@
+/* styles/globals.css */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html,
+body {
+  height: 100%;
+}
+
+/* Smooth underline hover effect */
+nav a {
+  position: relative;
+  text-decoration: none;
+}
+
+nav a::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  height: 2px;
+  background-color: #000000;
+  /* Tailwind red-600 */
+  width: 0%;
+  transition: width 0.3s ease;
+}
+
+nav a:hover::after {
+  width: 100%;
+}
+
+:root {
+
+  --card: #000000;
+  --muted: #9aa1ac;
+  --card-outline: rgb(255, 255, 255);
+  --card-outline-strong: rgb(255, 255, 255);
+
+  --primary: #000000;
+  --secondary: #f3f4f6;
+  --accent: #D4AF37;
+  --accent-dark: #B5952F;
+}
+
+.card {
+  background: var(--card);
+  border-radius: .9rem;
+  padding: 1rem;
+  border: 1px solid var(--card-outline);
+  box-shadow: 0 1px 5px rgb(255, 255, 255);
+  transition: border-color 200ms ease, box-shadow 200ms ease, transform 200ms ease;
+}
+
+.card:hover {
+  border-color: var(--card-outline-weak);
+  box-shadow: 0 6px 30px rgba(45, 44, 44, 0.341);
+  transform: scale(1.01)
+}
+
+html,
+body {
+  height: 100%;
+}
+
+body {
+  background: var(--bg);
+  color: rgb(0, 0, 0);
+}
+
+.container {
+  max-width: 1222px;
+  margin: 0 auto;
+  padding: 2rem 0rem;
+}
+
+.card {
+  background: var(--card);
+  border-radius: .9rem;
+  padding: 1rem;
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: .9rem;
+  padding: 0.5rem 1.5rem;
+  font-weight: 600;
+}
+
+.btn-primary {
+  background: rgb(0, 0, 0);
+  color: rgb(0, 0, 0);
+}
+
+.btn-outline {
+  border: 2px solid #333;
+}
+
+.badge {
+  font-size: 0.75rem;
+  padding: 0.15rem 0.5rem;
+  border-radius: 9999px;
+  background: #ffffff;
+}
+
+a {
+  color: #000000;
+}
+
+a:hover {
+  color: rgb(72, 0, 255);
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+
+.animate-slide-up {
+  animation: slideUp 0.3s ease-out;
+}
+
+@keyframes marquee {
+  0% {
+    transform: translateX(0);
+  }
+
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+.animate-marquee {
+  animation: marquee 20s linear infinite;
+}

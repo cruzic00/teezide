@@ -1,0 +1,108 @@
+
+> tee-store-starter@0.1.0 build
+> next build
+
+  ▲ Next.js 14.2.4
+  - Environments: .env.local
+
+   Creating an optimized production build ...
+ ✓ Compiled successfully
+   Linting and checking validity of types ...
+   Collecting page data ...
+   Generating static pages (0/31) ...
+   Generating static pages (7/31) 
+[api/products] GET invoked 2026-01-31T17:31:35.795Z
+[api/products] NODE_ENV= production MONGODB_URI present: true
+[api/products] collections: [ 'products', 'users' ]
+[api/products] found 2 documents
+   Generating static pages (15/31) 
+   Generating static pages (23/31) 
+ ⨯ useSearchParams() should be wrapped in a suspense boundary at page "/register". Read more: https://nextjs.org/docs/messages/missing-suspense-with-csr-bailout
+    at l (D:\braand.in\tee-store-starter\.next\server\chunks\889.js:16:11933)
+    at s (D:\braand.in\tee-store-starter\.next\server\chunks\889.js:16:22792)
+    at o (D:\braand.in\tee-store-starter\.next\server\app\register\page.js:1:2065)
+    at nj (D:\braand.in\tee-store-starter\node_modules\next\dist\compiled\next-server\app-page.runtime.prod.js:12:46251)
+    at nM (D:\braand.in\tee-store-starter\node_modules\next\dist\compiled\next-server\app-page.runtime.prod.js:12:47571)
+    at nN (D:\braand.in\tee-store-starter\node_modules\next\dist\compiled\next-server\app-page.runtime.prod.js:12:64546)
+    at nI (D:\braand.in\tee-store-starter\node_modules\next\dist\compiled\next-server\app-page.runtime.prod.js:12:47010)
+    at nM (D:\braand.in\tee-store-starter\node_modules\next\dist\compiled\next-server\app-page.runtime.prod.js:12:47717)
+    at nM (D:\braand.in\tee-store-starter\node_modules\next\dist\compiled\next-server\app-page.runtime.prod.js:12:61546)
+    at nN (D:\braand.in\tee-store-starter\node_modules\next\dist\compiled\next-server\app-page.runtime.prod.js:12:64546)
+
+Error occurred prerendering page "/register". Read more: https://nextjs.org/docs/messages/prerender-error
+
+ ⨯ useSearchParams() should be wrapped in a suspense boundary at page "/login". Read more: https://nextjs.org/docs/messages/missing-suspense-with-csr-bailout
+    at l (D:\braand.in\tee-store-starter\.next\server\chunks\889.js:16:11933)
+    at s (D:\braand.in\tee-store-starter\.next\server\chunks\889.js:16:22792)
+    at i (D:\braand.in\tee-store-starter\.next\server\app\login\page.js:1:2074)
+    at nj (D:\braand.in\tee-store-starter\node_modules\next\dist\compiled\next-server\app-page.runtime.prod.js:12:46251)
+    at nM (D:\braand.in\tee-store-starter\node_modules\next\dist\compiled\next-server\app-page.runtime.prod.js:12:47571)
+    at nN (D:\braand.in\tee-store-starter\node_modules\next\dist\compiled\next-server\app-page.runtime.prod.js:12:64546)
+    at nI (D:\braand.in\tee-store-starter\node_modules\next\dist\compiled\next-server\app-page.runtime.prod.js:12:47010)
+    at nM (D:\braand.in\tee-store-starter\node_modules\next\dist\compiled\next-server\app-page.runtime.prod.js:12:47717)
+    at nM (D:\braand.in\tee-store-starter\node_modules\next\dist\compiled\next-server\app-page.runtime.prod.js:12:61546)
+    at nN (D:\braand.in\tee-store-starter\node_modules\next\dist\compiled\next-server\app-page.runtime.prod.js:12:64546)
+
+Error occurred prerendering page "/login". Read more: https://nextjs.org/docs/messages/prerender-error
+
+TypeError: Cannot destructure property 'data' of '(0 , o.useSession)(...)' as it is undefined.
+    at c (D:\braand.in\tee-store-starter\.next\server\app\cart\page.js:1:2085)
+    at nj (D:\braand.in\tee-store-starter\node_modules\next\dist\compiled\next-server\app-page.runtime.prod.js:12:46251)
+    at nM (D:\braand.in\tee-store-starter\node_modules\next\dist\compiled\next-server\app-page.runtime.prod.js:12:47571)
+    at nN (D:\braand.in\tee-store-starter\node_modules\next\dist\compiled\next-server\app-page.runtime.prod.js:12:64546)
+    at nI (D:\braand.in\tee-store-starter\node_modules\next\dist\compiled\next-server\app-page.runtime.prod.js:12:47010)
+    at nM (D:\braand.in\tee-store-starter\node_modules\next\dist\compiled\next-server\app-page.runtime.prod.js:12:47717)
+    at nM (D:\braand.in\tee-store-starter\node_modules\next\dist\compiled\next-server\app-page.runtime.prod.js:12:61546)
+    at nN (D:\braand.in\tee-store-starter\node_modules\next\dist\compiled\next-server\app-page.runtime.prod.js:12:64546)
+    at nB (D:\braand.in\tee-store-starter\node_modules\next\dist\compiled\next-server\app-page.runtime.prod.js:12:67538)
+    at nD (D:\braand.in\tee-store-starter\node_modules\next\dist\compiled\next-server\app-page.runtime.prod.js:12:66680) {
+  digest: '1015959807'
+}
+
+Error occurred prerendering page "/cart". Read more: https://nextjs.org/docs/messages/prerender-error
+
+TypeError: Cannot destructure property 'data' of '(0 , o.useSession)(...)' as it is undefined.
+    at c (D:\braand.in\tee-store-starter\.next\server\app\cart\page.js:1:2085)
+    at nj (D:\braand.in\tee-store-starter\node_modules\next\dist\compiled\next-server\app-page.runtime.prod.js:12:46251)
+    at nM (D:\braand.in\tee-store-starter\node_modules\next\dist\compiled\next-server\app-page.runtime.prod.js:12:47571)
+    at nN (D:\braand.in\tee-store-starter\node_modules\next\dist\compiled\next-server\app-page.runtime.prod.js:12:64546)
+    at nI (D:\braand.in\tee-store-starter\node_modules\next\dist\compiled\next-server\app-page.runtime.prod.js:12:47010)
+    at nM (D:\braand.in\tee-store-starter\node_modules\next\dist\compiled\next-server\app-page.runtime.prod.js:12:47717)
+    at nM (D:\braand.in\tee-store-starter\node_modules\next\dist\compiled\next-server\app-page.runtime.prod.js:12:61546)
+    at nN (D:\braand.in\tee-store-starter\node_modules\next\dist\compiled\next-server\app-page.runtime.prod.js:12:64546)
+    at nB (D:\braand.in\tee-store-starter\node_modules\next\dist\compiled\next-server\app-page.runtime.prod.js:12:67538)
+    at nD (D:\braand.in\tee-store-starter\node_modules\next\dist\compiled\next-server\app-page.runtime.prod.js:12:66680)
+Error: useToast must be used inside ToastProvider
+    at D:\braand.in\tee-store-starter\.next\server\app\products\[slug]\page.js:1:2238
+    at a (D:\braand.in\tee-store-starter\.next\server\app\products\[slug]\page.js:1:2299)
+    at nj (D:\braand.in\tee-store-starter\node_modules\next\dist\compiled\next-server\app-page.runtime.prod.js:12:46251)
+    at nM (D:\braand.in\tee-store-starter\node_modules\next\dist\compiled\next-server\app-page.runtime.prod.js:12:47571)
+    at nM (D:\braand.in\tee-store-starter\node_modules\next\dist\compiled\next-server\app-page.runtime.prod.js:12:61546)
+    at nN (D:\braand.in\tee-store-starter\node_modules\next\dist\compiled\next-server\app-page.runtime.prod.js:12:64546)
+    at nB (D:\braand.in\tee-store-starter\node_modules\next\dist\compiled\next-server\app-page.runtime.prod.js:12:67538)
+    at nD (D:\braand.in\tee-store-starter\node_modules\next\dist\compiled\next-server\app-page.runtime.prod.js:12:66680)
+    at nN (D:\braand.in\tee-store-starter\node_modules\next\dist\compiled\next-server\app-page.runtime.prod.js:12:64853)
+    at nB (D:\braand.in\tee-store-starter\node_modules\next\dist\compiled\next-server\app-page.runtime.prod.js:12:67538) {
+  digest: '3706439521'
+}
+
+Error occurred prerendering page "/products/crisp-white-tee". Read more: https://nextjs.org/docs/messages/prerender-error
+
+Error: useToast must be used inside ToastProvider
+    at D:\braand.in\tee-store-starter\.next\server\app\products\[slug]\page.js:1:2238
+    at a (D:\braand.in\tee-store-starter\.next\server\app\products\[slug]\page.js:1:2299)
+    at nj (D:\braand.in\tee-store-starter\node_modules\next\dist\compiled\next-server\app-page.runtime.prod.js:12:46251)
+    at nM (D:\braand.in\tee-store-starter\node_modules\next\dist\compiled\next-server\app-page.runtime.prod.js:12:47571)
+    at nM (D:\braand.in\tee-store-starter\node_modules\next\dist\compiled\next-server\app-page.runtime.prod.js:12:61546)
+    at nN (D:\braand.in\tee-store-starter\node_modules\next\dist\compiled\next-server\app-page.runtime.prod.js:12:64546)
+    at nB (D:\braand.in\tee-store-starter\node_modules\next\dist\compiled\next-server\app-page.runtime.prod.js:12:67538)
+    at nD (D:\braand.in\tee-store-starter\node_modules\next\dist\compiled\next-server\app-page.runtime.prod.js:12:66680)
+    at nN (D:\braand.in\tee-store-starter\node_modules\next\dist\compiled\next-server\app-page.runtime.prod.js:12:64853)
+    at nB (D:\braand.in\tee-store-starter\node_modules\next\dist\compiled\next-server\app-page.runtime.prod.js:12:67538)
+ ✓ Generating static pages (31/31)
+
+> Export encountered errors on following paths:
+	/cart/page: /cart
+	/login/page: /login
+	/products/[slug]/page: /products/crisp-white-tee
+	/register/page: /register

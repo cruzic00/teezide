@@ -1,0 +1,20 @@
+
+> tee-store-starter@0.1.0 build
+> next build
+
+  ▲ Next.js 14.2.4
+  - Environments: .env.local
+
+
+> Build error occurred
+Error: You cannot use different slug names for the same dynamic path ('id' !== 'slug').
+    at handleSlug (D:\braand.in\tee-store-starter\node_modules\next\dist\shared\lib\router\utils\sorted-routes.js:94:31)
+    at UrlNode._insert (D:\braand.in\tee-store-starter\node_modules\next\dist\shared\lib\router\utils\sorted-routes.js:131:17)
+    at UrlNode._insert (D:\braand.in\tee-store-starter\node_modules\next\dist\shared\lib\router\utils\sorted-routes.js:142:40)
+    at UrlNode.insert (D:\braand.in\tee-store-starter\node_modules\next\dist\shared\lib\router\utils\sorted-routes.js:13:14)
+    at D:\braand.in\tee-store-starter\node_modules\next\dist\shared\lib\router\utils\sorted-routes.js:165:46
+    at Array.forEach (<anonymous>)
+    at getSortedRoutes (D:\braand.in\tee-store-starter\node_modules\next\dist\shared\lib\router\utils\sorted-routes.js:165:21)
+    at D:\braand.in\tee-store-starter\node_modules\next\dist\build\index.js:623:65
+    at Span.traceFn (D:\braand.in\tee-store-starter\node_modules\next\dist\trace\trace.js:147:20)
+    at D:\braand.in\tee-store-starter\node_modules\next\dist\build\index.js:622:89
