@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { createClient } from "../../../../lib/supabase/server";
+import { createAdminClient } from "../../../../lib/supabase/admin";
 
 export async function POST(req: Request) {
   try {
@@ -14,22 +14,25 @@ export async function POST(req: Request) {
 
     const cleanEmail = String(email).trim().toLowerCase();
 
-    const supabase = await createClient();
-    const { data, error } = await supabase.auth.signUp({
+    // Create the user already confirmed via the admin API. This avoids
+    // Supabase's confirmation-email flow (and its strict email rate limit),
+    // so users can log in immediately after registering.
+    const admin = createAdminClient();
+    const { error } = await admin.auth.admin.createUser({
       email: cleanEmail,
       password,
-      options: { data: { name } },
+      email_confirm: true,
+      user_metadata: { name },
     });
 
     if (error) {
-      return NextResponse.json({ error: error.message }, { status: 400 });
+      const msg = /already/i.test(error.message)
+        ? "An account with this email already exists. Please log in."
+        : error.message;
+      return NextResponse.json({ error: msg }, { status: 400 });
     }
 
-    // If email confirmation is disabled, a session is created and the user is
-    // already signed in. Otherwise they must confirm via email before login.
-    const needsConfirmation = !data.session;
-
-    return NextResponse.json({ success: true, needsConfirmation }, { status: 201 });
+    return NextResponse.json({ success: true }, { status: 201 });
   } catch (err) {
     console.error("REGISTER ERROR:", err);
     return NextResponse.json({ error: "Server error" }, { status: 500 });
