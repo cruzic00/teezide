@@ -25,26 +25,29 @@ export default function ProductGallery({ images, productName }: ProductGalleryPr
 
     return (
         <div className="flex flex-col-reverse md:flex-row gap-4">
-            {/* THUMBNAILS (Bottom on mobile, Left on desktop) */}
-            <div className="flex md:flex-col gap-3 overflow-x-auto md:overflow-y-auto md:w-20 md:max-h-[600px] scrollbar-hide py-1 px-1">
-                {images.map((img, i) => (
-                    <button
-                        key={i}
-                        onClick={() => setSelectedImage(i)}
-                        className={`relative flex-shrink-0 w-16 h-16 md:w-20 md:h-20 rounded-lg overflow-hidden border-2 transition-all ${selectedImage === i
-                                ? "border-accent shadow-md shadow-accent/20"
-                                : "border-transparent opacity-70 hover:opacity-100 hover:border-gray-300"
-                            }`}
-                    >
-                        <Image
-                            src={img}
-                            alt={`${productName} view ${i + 1}`}
-                            fill
-                            className="object-cover"
-                        />
-                    </button>
-                ))}
-            </div>
+            {/* THUMBNAILS — only when there is more than one image. */}
+            {images.length > 1 && (
+                <div className="flex md:flex-col gap-3 overflow-x-auto md:overflow-y-auto md:w-20 md:max-h-[600px] scrollbar-hide py-1 px-1">
+                    {images.map((img, i) => (
+                        <button
+                            key={i}
+                            onMouseEnter={() => setSelectedImage(i)}
+                            onClick={() => setSelectedImage(i)}
+                            className={`relative flex-shrink-0 w-16 h-16 md:w-20 md:h-20 rounded-lg overflow-hidden border-2 transition-all ${selectedImage === i
+                                    ? "border-accent shadow-md shadow-accent/20"
+                                    : "border-transparent opacity-70 hover:opacity-100 hover:border-gray-300"
+                                }`}
+                        >
+                            <Image
+                                src={img}
+                                alt={`${productName} view ${i + 1}`}
+                                fill
+                                className="object-cover"
+                            />
+                        </button>
+                    ))}
+                </div>
+            )}
 
             {/* MAIN IMAGE */}
             <div className="relative flex-1 aspect-[3/4] md:aspect-square bg-white rounded-2xl overflow-hidden ring-1 ring-gray-100">

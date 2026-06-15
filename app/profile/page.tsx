@@ -1,41 +1,58 @@
 import { redirect } from "next/navigation";
+import Link from "next/link";
+import { Package, ShoppingBag, UserCog, LayoutDashboard, ChevronRight, MapPin, HelpCircle } from "lucide-react";
 import { createClient } from "../../lib/supabase/server";
-import ProfileForm from "../../components/ProfileForm";
 
-export default async function ProfilePage() {
+export default async function AccountPage() {
   const supabase = await createClient();
   const {
     data: { user },
   } = await supabase.auth.getUser();
 
-  if (!user) {
-    redirect("/login?redirect=/profile");
-  }
+  if (!user) redirect("/login?redirect=/profile");
 
   const { data: profile } = await supabase
     .from("profiles")
-    .select("name, phone, avatar_url, role, created_at")
+    .select("name, role")
     .eq("id", user.id)
     .single();
 
-  const initialUser = {
-    email: user.email ?? "",
-    role: profile?.role ?? "user",
-    username: profile?.name ?? "",
-    phone: profile?.phone ?? "",
-    profilePicture: profile?.avatar_url ?? "",
-    createdAt: profile?.created_at ?? user.created_at ?? new Date().toISOString(),
-  };
+  const name = profile?.name || user.email?.split("@")[0] || "there";
+  const isAdmin = profile?.role === "admin";
+
+  const cards = [
+    { href: "/orders", icon: Package, title: "Your Orders", desc: "Track, return, or buy things again" },
+    { href: "/profile/edit", icon: UserCog, title: "Login & Profile", desc: "Edit your name, phone & avatar" },
+    { href: "/cart", icon: ShoppingBag, title: "Your Cart", desc: "Items ready for checkout" },
+    { href: "/profile/edit", icon: MapPin, title: "Addresses", desc: "Manage your delivery details" },
+    { href: "mailto:mynonlineshop@gmail.com", icon: HelpCircle, title: "Support", desc: "Get help with your orders" },
+    ...(isAdmin ? [{ href: "/admin", icon: LayoutDashboard, title: "Admin Panel", desc: "Manage products & orders" }] : []),
+  ];
 
   return (
-    <div className="min-h-screen bg-white relative overflow-hidden flex items-center justify-center p-4">
-      <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none">
-        <div className="absolute -top-[20%] -left-[10%] w-[50%] h-[50%] bg-white rounded-full blur-[120px]" />
-        <div className="absolute top-[40%] -right-[10%] w-[40%] h-[40%] bg-white rounded-full blur-[100px]" />
-      </div>
+    <div className="max-w-5xl mx-auto py-10 px-2">
+      <h1 className="text-3xl font-bold text-neutral-900">Hello, {name}</h1>
+      <p className="text-neutral-500 mt-1 mb-8">Manage your account, orders and settings.</p>
 
-      <div className="relative z-10 w-full max-w-2xl">
-        <ProfileForm initialUser={initialUser} />
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+        {cards.map((c, i) => (
+          <Link
+            key={i}
+            href={c.href}
+            className="group flex items-start gap-4 bg-white border border-neutral-200/70 rounded-2xl p-6 shadow-sm hover:shadow-xl hover:-translate-y-0.5 transition-all"
+          >
+            <div className="p-3 rounded-xl bg-neutral-100 text-neutral-800 group-hover:bg-neutral-900 group-hover:text-white transition-colors shrink-0">
+              <c.icon size={24} />
+            </div>
+            <div className="flex-1 min-w-0">
+              <h3 className="font-bold text-neutral-900 flex items-center gap-1">
+                {c.title}
+                <ChevronRight size={16} className="text-neutral-400 transition-transform group-hover:translate-x-1" />
+              </h3>
+              <p className="text-sm text-neutral-500 mt-0.5">{c.desc}</p>
+            </div>
+          </Link>
+        ))}
       </div>
     </div>
   );

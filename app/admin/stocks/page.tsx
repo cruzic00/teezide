@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Plus, Search, Edit, Trash2, X, Save, RefreshCw } from "lucide-react";
+import { Plus, Search, Edit, Trash2, X, Save, RefreshCw, Loader2 } from "lucide-react";
 
 type Product = {
     _id?: string;
@@ -18,6 +18,7 @@ type Product = {
     appPrice: number; // Calculated
     status: "Active" | "Not Active" | "Offer Active";
     imageUrl?: string;
+    images?: string[]; // gallery
     image?: string; // fallback
     aboutItems?: string[];
     reviewsCount?: number;
@@ -52,6 +53,7 @@ const EMPTY_PRODUCT: Product = {
     trending: false,
     technicalDetails: [],
     recommendation: [],
+    images: [],
 };
 
 export default function StocksPage() {
@@ -61,6 +63,30 @@ export default function StocksPage() {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [editingId, setEditingId] = useState<string | null>(null);
     const [formData, setFormData] = useState<Product>(EMPTY_PRODUCT);
+    const [galleryUploading, setGalleryUploading] = useState(false);
+
+    async function uploadToStorage(file: File): Promise<string | null> {
+        const fd = new FormData();
+        fd.append("file", file);
+        const res = await fetch("/api/admin/upload", { method: "POST", body: fd });
+        const data = await res.json();
+        if (!res.ok) {
+            alert(data.error || "Upload failed");
+            return null;
+        }
+        return data.url;
+    }
+
+    async function addGalleryImage(file: File) {
+        setGalleryUploading(true);
+        const url = await uploadToStorage(file);
+        setGalleryUploading(false);
+        if (url) setFormData(prev => ({ ...prev, images: [...(prev.images || []), url] }));
+    }
+
+    function removeGalleryImage(index: number) {
+        setFormData(prev => ({ ...prev, images: (prev.images || []).filter((_, i) => i !== index) }));
+    }
 
     useEffect(() => {
         fetchProducts();
@@ -413,6 +439,27 @@ export default function StocksPage() {
                                         </select>
                                     </div>
                                 </div>
+                            </div>
+
+                            {/* GALLERY IMAGES */}
+                            <div>
+                                <h3 className="text-sm font-bold text-gray-900 uppercase tracking-wider mb-4 border-b border-gray-100 pb-2">Gallery Images</h3>
+                                <div className="flex flex-wrap gap-3 items-center">
+                                    {(formData.images || []).map((img, index) => (
+                                        <div key={index} className="relative w-20 h-20 rounded-lg overflow-hidden border border-gray-200 group">
+                                            <img src={img} alt="" className="w-full h-full object-cover" />
+                                            <button type="button" onClick={() => removeGalleryImage(index)} className="absolute top-0.5 right-0.5 bg-white/90 rounded-full p-1 text-red-500 opacity-0 group-hover:opacity-100 transition">
+                                                <Trash2 size={12} />
+                                            </button>
+                                        </div>
+                                    ))}
+                                    <label className="cursor-pointer w-20 h-20 rounded-lg border-2 border-dashed border-gray-300 flex flex-col items-center justify-center text-gray-400 hover:border-neutral-900 hover:text-neutral-900 transition">
+                                        {galleryUploading ? <Loader2 size={18} className="animate-spin" /> : <Plus size={20} />}
+                                        <span className="text-[10px] mt-1">Add</span>
+                                        <input type="file" accept="image/*" className="hidden" onChange={(e) => e.target.files?.[0] && addGalleryImage(e.target.files[0])} />
+                                    </label>
+                                </div>
+                                <p className="text-xs text-gray-400 mt-2">Shown on the product page alongside the main image.</p>
                             </div>
 
                             {/* SECTION 1.5: ADDITIONAL DETAILS */}

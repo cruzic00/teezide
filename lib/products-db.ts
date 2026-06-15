@@ -8,6 +8,10 @@ const PLACEHOLDER = "/placeholder.png";
 
 export function mapProduct(d: any) {
   const image = d.image_url || (Array.isArray(d.images) && d.images[0]) || PLACEHOLDER;
+  // Gallery = primary image first, then any extra images, de-duplicated.
+  const gallery = [image, ...(Array.isArray(d.images) ? d.images : [])].filter(
+    (v, i, a) => v && a.indexOf(v) === i
+  );
   return {
     id: d.id,
     _id: d.id,
@@ -19,7 +23,7 @@ export function mapProduct(d: any) {
     mrp: d.mrp ?? undefined,
     image,
     imageUrl: image,
-    images: Array.isArray(d.images) && d.images.length ? d.images : [image],
+    images: gallery.length ? gallery : [image],
     sizes: Array.isArray(d.sizes) && d.sizes.length ? d.sizes : ["S", "M", "L", "XL"],
     colors: d.colors ?? [],
     rating: d.rating ?? 0,

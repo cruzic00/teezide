@@ -15,12 +15,14 @@ export default function LayoutShell({ children }: { children: React.ReactNode })
     return <>{children}</>;
   }
 
+  const hideFooter = pathname === "/cart";
+
   return (
     <>
       <MarqueeBanner />
       <Navbar />
       <main className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-8">{children}</main>
-      <Footer />
+      {!hideFooter && <Footer />}
     </>
   );
 }
