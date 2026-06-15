@@ -43,51 +43,61 @@ export function mapProduct(d: any) {
 }
 
 export async function getProducts(opts: { category?: string } = {}) {
-  const supabase = await createClient();
-  let query = supabase
-    .from("products")
-    .select("*")
-    .order("created_at", { ascending: false });
+  try {
+    const supabase = await createClient();
+    let query = supabase
+      .from("products")
+      .select("*")
+      .order("created_at", { ascending: false });
 
-  if (opts.category) {
-    query = query.ilike("category", opts.category);
-  }
+    if (opts.category) {
+      query = query.ilike("category", opts.category);
+    }
 
-  const { data, error } = await query;
-  if (error) {
-    console.error("getProducts error:", error.message);
+    const { data, error } = await query;
+    if (error) {
+      console.error("getProducts error:", error.message);
+      return [];
+    }
+    return (data ?? []).map(mapProduct);
+  } catch (e) {
+    console.error("getProducts failed:", e);
     return [];
   }
-  return (data ?? []).map(mapProduct);
 }
 
 export async function getProductBySlug(slug: string) {
-  const supabase = await createClient();
-  const { data } = await supabase
-    .from("products")
-    .select("*")
-    .eq("slug", slug)
-    .single();
+  try {
+    const supabase = await createClient();
+    const { data } = await supabase
+      .from("products")
+      .select("*")
+      .eq("slug", slug)
+      .single();
 
-  if (!data) return null;
+    if (!data) return null;
 
-  const product = mapProduct(data);
+    const product = mapProduct(data);
 
-  const { data: reviews } = await supabase
-    .from("reviews")
-    .select("reviewer, text, rating, image, created_at")
-    .eq("product_id", data.id)
-    .order("created_at", { ascending: false });
+    const { data: reviews } = await supabase
+      .from("reviews")
+      .select("reviewer, text, rating, image, created_at")
+      .eq("product_id", data.id)
+      .order("created_at", { ascending: false });
 
-  return {
-    ...product,
-    customersSay: (reviews ?? []).map((r) => ({
-      text: r.text,
-      reviewer: r.reviewer,
-      image: r.image,
-      rating: r.rating,
-      createdAt: r.created_at,
-    })),
-    relatedProducts: [] as any[],
-  };
+    return {
+      ...product,
+      customersSay: (reviews ?? []).map((r) => ({
+        text: r.text,
+        reviewer: r.reviewer,
+        image: r.image,
+        rating: r.rating,
+        createdAt: r.created_at,
+      })),
+      relatedProducts: [] as any[],
+    };
+  } catch (e) {
+    console.error("getProductBySlug failed:", e);
+    return null;
+  }
 }
