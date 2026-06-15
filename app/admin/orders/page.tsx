@@ -1,58 +1,57 @@
-async function getOrders() {
-  const res = await fetch("http://localhost:3000/api/admin/orders", {
-    cache: "no-store",
-  });
-  return res.json();
-}
+import { getAllOrders } from "../../../lib/admin-data";
+import { PageHeader, Card, Badge, Th, EmptyState } from "../_components/AdminUI";
 
 export default async function AdminOrdersPage() {
-  const orders = await getOrders();
+  const orders = await getAllOrders();
 
   return (
-    <div className="p-8">
-      <h1 className="text-2xl font-bold mb-6">Orders</h1>
+    <div className="p-8 md:p-10">
+      <PageHeader title="Orders" subtitle={`${orders.length} total`} />
 
-      {orders.length === 0 && (
-        <p className="text-gray-500">No orders yet</p>
-      )}
-
-      <table className="w-full border">
-        <thead>
-          <tr className="bg-gray-100">
-            <th className="border p-2">User</th>
-            <th className="border p-2">Items</th>
-            <th className="border p-2">Total</th>
-            <th className="border p-2">Status</th>
-            <th className="border p-2">Date</th>
-          </tr>
-        </thead>
-
-        <tbody>
-          {orders.map((order: any) => (
-            <tr key={order._id}>
-              <td className="border p-2">{order.userEmail}</td>
-
-              <td className="border p-2">
-                {order.items.map((item: any, idx: number) => (
-                  <div key={idx}>
-                    {item.name} ({item.size}) × {item.qty}
-                  </div>
-                ))}
-              </td>
-
-              <td className="border p-2">₹{order.total}</td>
-
-              <td className="border p-2 capitalize">
-                {order.status}
-              </td>
-
-              <td className="border p-2">
-                {new Date(order.createdAt).toLocaleDateString()}
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
+      <Card>
+        {orders.length === 0 ? (
+          <EmptyState text="No orders yet." />
+        ) : (
+          <table className="w-full text-sm">
+            <thead className="bg-neutral-50/80 text-xs uppercase tracking-wider text-neutral-500 border-b border-neutral-100">
+              <tr>
+                <Th>Order</Th>
+                <Th>Customer</Th>
+                <Th>Items</Th>
+                <Th>Total</Th>
+                <Th>Status</Th>
+                <Th>Date</Th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-neutral-100">
+              {orders.map((o: any) => {
+                const count = (o.items ?? []).reduce(
+                  (s: number, i: any) => s + (i.qty || 0),
+                  0
+                );
+                return (
+                  <tr key={o.id} className="hover:bg-neutral-50/60 transition-colors">
+                    <td className="px-6 py-4 font-mono text-xs text-neutral-500">
+                      #{String(o.id).slice(0, 8)}
+                    </td>
+                    <td className="px-6 py-4 font-medium text-neutral-900">{o.userEmail}</td>
+                    <td className="px-6 py-4 text-neutral-600">{count} item(s)</td>
+                    <td className="px-6 py-4 font-bold text-neutral-900">
+                      ₹{(o.total / 100).toFixed(2)}
+                    </td>
+                    <td className="px-6 py-4">
+                      <Badge value={o.status} />
+                    </td>
+                    <td className="px-6 py-4 text-neutral-500">
+                      {new Date(o.created_at).toLocaleDateString()}
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        )}
+      </Card>
     </div>
   );
 }

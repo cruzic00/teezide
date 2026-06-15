@@ -1,31 +1,37 @@
-// app/account/orders/page.tsx
-import React from "react";
-import clientPromise from "../../lib/mongodb";
-import { getCurrentUser } from "../../lib/auth";
-import { ObjectId } from "mongodb";
+import { redirect } from "next/navigation";
+import { createClient } from "../../lib/supabase/server";
 
-export default async function OrdersPage() {
-  const user = await getCurrentUser();
-  if (!user) return <div className="p-6">Please sign in to view orders.</div>;
-  const userId = new ObjectId(user._id);
+export default async function AccountOrdersPage() {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
 
-  const client = await clientPromise;
-  const db = client.db();
-  const orders = await db.collection("orders").find({ userId }).sort({ createdAt: -1 }).toArray();
+  if (!user) redirect("/login?redirect=/account");
+
+  const { data: orders } = await supabase
+    .from("orders")
+    .select("id, items, total, status, created_at")
+    .eq("user_id", user.id)
+    .order("created_at", { ascending: false });
 
   return (
     <main className="p-6">
-      <h1 className="text-2xl">My Orders</h1>
+      <h1 className="text-2xl font-bold">My Orders</h1>
       <div className="mt-3 space-y-3">
-        {orders.length === 0 ? <p>No orders yet.</p> : orders.map((o: any) => (
-          <div key={String(o._id)} className="p-3 border rounded">
-            <div>Order: {String(o._id)}</div>
-            <div>Items: {o.items.length}</div>
-            <div>Total: ₹{o.total}</div>
-            <div>Status: {o.status}</div>
-            <div>Date: {new Date(o.createdAt).toLocaleString()}</div>
-          </div>
-        ))}
+        {!orders || orders.length === 0 ? (
+          <p>No orders yet.</p>
+        ) : (
+          orders.map((o: any) => (
+            <div key={o.id} className="p-3 border rounded">
+              <div>Order: {o.id}</div>
+              <div>Items: {Array.isArray(o.items) ? o.items.length : 0}</div>
+              <div>Total: ₹{(o.total / 100).toFixed(2)}</div>
+              <div className="capitalize">Status: {o.status}</div>
+              <div>Date: {new Date(o.created_at).toLocaleString()}</div>
+            </div>
+          ))
+        )}
       </div>
     </main>
   );

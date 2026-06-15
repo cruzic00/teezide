@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { LayoutDashboard, Users, ShoppingBag, Package, LogOut, Settings, ClipboardList } from "lucide-react";
+import { LayoutDashboard, Users, ShoppingBag, Package, LogOut, CreditCard, Palette } from "lucide-react";
 
 export default function Sidebar({ user }: { user: any }) {
     const pathname = usePathname();
@@ -11,18 +11,19 @@ export default function Sidebar({ user }: { user: any }) {
         { name: "Dashboard", href: "/admin", icon: LayoutDashboard },
         { name: "Users", href: "/admin/users", icon: Users },
         { name: "Orders", href: "/admin/orders", icon: ShoppingBag },
+        { name: "Payments", href: "/admin/payments", icon: CreditCard },
         { name: "Products", href: "/admin/stocks", icon: Package },
-        { name: "Stock Management", href: "/admin/stocks", icon: ClipboardList },
-        { name: "Settings", href: "/admin/settings", icon: Settings },
+        { name: "Customization", href: "/admin/customization", icon: Palette },
     ];
 
     return (
         <div className="flex flex-col h-full">
             {/* Header */}
-            <div className="p-8 border-b border-neutral-800">
-                <h1 className="text-3xl font-black tracking-tighter text-white">
-                    TEE<span className="text-yellow-400">STORE</span> ADMIN
+            <div className="px-8 py-7 border-b border-neutral-800/80">
+                <h1 className="text-2xl font-black tracking-tighter text-white">
+                    TEE<span className="text-yellow-400">ZIDE</span>
                 </h1>
+                <p className="text-[10px] font-bold uppercase tracking-[0.3em] text-neutral-500 mt-1">Admin Panel</p>
             </div>
 
             {/* Nav */}

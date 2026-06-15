@@ -13,11 +13,6 @@ export default function Navbar() {
   const pathname = usePathname();
   const router = useRouter();
 
-  // Hide Navbar on Admin pages (admin panel has its own sidebar)
-  if (pathname.startsWith("/admin")) {
-    return null;
-  }
-
   const [open, setOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
@@ -40,13 +35,18 @@ export default function Navbar() {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
+  // Hide Navbar on Admin pages (admin panel has its own sidebar)
+  if (pathname.startsWith("/admin")) {
+    return null;
+  }
+
   return (
-    <nav className="sticky top-0 z-50 bg-white/90 backdrop-blur-md border-b border-gray-100/50 shadow-sm transition-all duration-300">
-      <div className="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
+    <nav className="sticky top-0 z-50 bg-white/60 backdrop-blur-xl border-b border-white/30 shadow-sm transition-all duration-300">
+      <div className="max-w-7xl mx-auto px-6 py-2 flex justify-between items-center">
         {/* LEFT: LOGO */}
         <div className="flex-shrink-0">
           <Link href="/" className="group flex items-center gap-2">
-            <img src="/loggo.png" alt="Teezide" className="h-12 w-auto object-contain transition-transform group-hover:scale-105" />
+            <img src="/loggo.png" alt="Teezide" className="h-9 w-auto object-contain transition-transform group-hover:scale-105" />
           </Link>
         </div>
 

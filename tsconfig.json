@@ -31,7 +31,7 @@
     "**/*.ts",
     "**/*.tsx",
     ".next/types/**/*.ts"
-, "app/login/layout.txs"  ],
+  ],
   "exclude": [
     "node_modules",
     ".next"

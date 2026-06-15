@@ -2,7 +2,6 @@
 
 import { useState, Suspense, useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { signIn } from "next-auth/react";
 import { useAuth } from "../context/AuthContext";
 
 
@@ -100,24 +99,6 @@ function RegisterForm() {
           className="w-full bg-black text-white py-2 rounded font-semibold disabled:opacity-50"
         >
           {loading ? "Creating..." : "Register"}
-        </button>
-
-        {/* Divider */}
-        <div className="flex items-center gap-2">
-          <div className="flex-1 h-px bg-gray-300" />
-          <span className="text-sm text-gray-500">OR</span>
-          <div className="flex-1 h-px bg-gray-300" />
-        </div>
-
-        {/* Google Login */}
-        <button
-          type="button"
-          onClick={() =>
-            signIn("google", { callbackUrl: redirect })
-          }
-          className="w-full border py-2 rounded font-semibold hover:bg-gray-50"
-        >
-          Continue with Google
         </button>
 
         <p className="text-sm text-center text-gray-600">

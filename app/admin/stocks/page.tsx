@@ -25,6 +25,7 @@ type Product = {
     customersSay?: { text: string; reviewer: string; image: string }[];
     replacementPolicy?: string;
     freeDelivery?: boolean;
+    trending?: boolean;
     technicalDetails?: { label: string; value: string }[];
     recommendation?: string[];
 };
@@ -37,8 +38,8 @@ const EMPTY_PRODUCT: Product = {
     unit: "1pc",
     mrp: 0,
     supplierPrice: 0,
-    cgst: 2.5,
-    sgst: 2.5,
+    cgst: 0,
+    sgst: 0,
     commission: 0,
     appPrice: 0,
     status: "Active",
@@ -48,6 +49,7 @@ const EMPTY_PRODUCT: Product = {
     customersSay: [],
     replacementPolicy: "3 days replacement",
     freeDelivery: true,
+    trending: false,
     technicalDetails: [],
     recommendation: [],
 };
@@ -87,32 +89,22 @@ export default function StocksPage() {
         }
     }
 
-    // Price Calculation Logic
-    // App Price = Supplier Price + Taxes + Commission
+    // App Price = the sale price entered (no taxes/commission).
     function calculateAppPrice(p: Product) {
-        const base = Number(p.supplierPrice) || 0;
-        const cgstAmt = base * (Number(p.cgst) / 100);
-        const sgstAmt = base * (Number(p.sgst) / 100);
-        const tax = cgstAmt + sgstAmt;
-        const comm = Number(p.commission) || 0; // Assuming fixed amount for now, or percentage?
-        // If commission is percentage: const comm = (base + tax) * (p.commission / 100);
-        // User prompted "Myn Commission", usually a markup. Let's assume fixed value addition for now based on typical patterns, 
-        // OR it could be a percentage markup. Let's use simple addition as per the reference grid which has '0' mostly.
-
-        return Math.round(base + tax + comm);
+        return Math.round(Number(p.supplierPrice) || 0);
     }
 
     useEffect(() => {
-        // Auto-calculate App Price whenever dependencies change
+        // Keep App Price in sync with the entered sale price.
         const calculated = calculateAppPrice(formData);
         setFormData(prev => ({ ...prev, appPrice: calculated }));
-    }, [formData.supplierPrice, formData.cgst, formData.sgst, formData.commission]);
+    }, [formData.supplierPrice]);
 
     function handleInputChange(e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) {
         const { name, value } = e.target;
         const checked = (e.target as HTMLInputElement).checked;
 
-        if (name === "freeDelivery") {
+        if (name === "freeDelivery" || name === "trending") {
             setFormData(prev => ({ ...prev, [name]: checked }));
             return;
         }
@@ -253,7 +245,7 @@ export default function StocksPage() {
                     </button>
                     <button
                         onClick={() => { setFormData(EMPTY_PRODUCT); setEditingId(null); setIsModalOpen(true); }}
-                        className="flex items-center gap-3 px-6 py-3 bg-teal-700 text-white rounded-xl hover:bg-teal-800 transition shadow-lg shadow-teal-900/20 font-bold text-base"
+                        className="flex items-center gap-3 px-6 py-3 bg-neutral-900 text-white rounded-xl hover:bg-neutral-800 transition shadow-lg shadow-neutral-900/20 font-bold text-base"
                     >
                         <Plus size={24} />
                         Add Item
@@ -268,7 +260,7 @@ export default function StocksPage() {
                     <input
                         type="text"
                         placeholder="Search products..."
-                        className="w-full pl-12 pr-6 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-teal-500 text-base"
+                        className="w-full pl-12 pr-6 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-neutral-900 text-base"
                         value={searchTerm}
                         onChange={e => setSearchTerm(e.target.value)}
                     />
@@ -290,24 +282,18 @@ export default function StocksPage() {
                             <tr>
                                 <th className="px-6 py-4">#</th>
                                 <th className="px-6 py-4">Product Name</th>
-                                <th className="px-6 py-4">Brand</th>
                                 <th className="px-6 py-4">Category</th>
-                                <th className="px-6 py-4">Unit</th>
-                                <th className="px-6 py-4">MRP</th>
-                                <th className="px-6 py-4">Supplier Price</th>
-                                <th className="px-6 py-4">CGST (%)</th>
-                                <th className="px-6 py-4">SGST (%)</th>
-                                <th className="px-6 py-4">Comm.</th>
-                                <th className="px-6 py-4 bg-teal-50 text-teal-800">App Price</th>
+                                <th className="px-6 py-4 hidden sm:table-cell">MRP</th>
+                                <th className="px-6 py-4 bg-neutral-100 text-neutral-800">App Price</th>
                                 <th className="px-6 py-4">Status</th>
                                 <th className="px-6 py-4 text-center">Actions</th>
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-gray-100">
                             {loading ? (
-                                <tr><td colSpan={13} className="text-center py-10 text-gray-500">Loading...</td></tr>
+                                <tr><td colSpan={7} className="text-center py-10 text-gray-500">Loading...</td></tr>
                             ) : filteredProducts.length === 0 ? (
-                                <tr><td colSpan={13} className="text-center py-10 text-gray-500">No products found</td></tr>
+                                <tr><td colSpan={7} className="text-center py-10 text-gray-500">No products found</td></tr>
                             ) : (
                                 filteredProducts.map((p, i) => (
                                     <tr key={p._id || i} className="hover:bg-gray-50 transition">
@@ -316,15 +302,9 @@ export default function StocksPage() {
                                             {p.imageUrl && <img src={p.imageUrl} alt="" className="w-10 h-10 rounded object-cover border border-gray-200" />}
                                             <span className="font-semibold text-gray-800 line-clamp-1 w-48" title={p.name}>{p.name}</span>
                                         </td>
-                                        <td className="px-6 py-4">{p.brand || "-"}</td>
-                                        <td className="px-6 py-4">{p.category || "-"}</td>
-                                        <td className="px-6 py-4">{p.unit}</td>
-                                        <td className="px-6 py-4 text-gray-500">₹{p.mrp}</td>
-                                        <td className="px-6 py-4 font-mono">₹{p.supplierPrice}</td>
-                                        <td className="px-6 py-4">{p.cgst}</td>
-                                        <td className="px-6 py-4">{p.sgst}</td>
-                                        <td className="px-6 py-4">{p.commission}</td>
-                                        <td className="px-6 py-4 font-bold text-teal-700 bg-teal-50 border-x border-teal-100">₹{calculateAppPrice(p)}</td>
+                                        <td className="px-6 py-4 capitalize">{p.category || "-"}</td>
+                                        <td className="px-6 py-4 text-gray-500 hidden sm:table-cell">₹{p.mrp}</td>
+                                        <td className="px-6 py-4 font-bold text-neutral-900 bg-neutral-100 border-x border-neutral-200">₹{calculateAppPrice(p)}</td>
                                         <td className="px-6 py-4">
                                             <span className={`px-2 py-1 rounded text-xs font-bold ${p.status === 'Active' ? 'bg-green-100 text-green-700' :
                                                 p.status === 'Offer Active' ? 'bg-yellow-100 text-yellow-700' :
@@ -373,13 +353,13 @@ export default function StocksPage() {
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                     <div className="col-span-2">
                                         <label className="block text-sm font-medium text-gray-700 mb-1">Product Name</label>
-                                        <input required name="name" value={formData.name} onChange={handleInputChange} className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-teal-500 outline-none" placeholder="e.g. Black Pepper 100g" />
+                                        <input required name="name" value={formData.name} onChange={handleInputChange} className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-neutral-900 outline-none" placeholder="e.g. Black Pepper 100g" />
                                     </div>
                                     {/* Brand is hardcoded to Teezide, hidden from user */}
 
                                     <div>
                                         <label className="block text-sm font-medium text-gray-700 mb-1">Category</label>
-                                        <select name="category" value={formData.category} onChange={handleInputChange} className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-teal-500 outline-none">
+                                        <select name="category" value={formData.category} onChange={handleInputChange} className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-neutral-900 outline-none">
                                             <option value="">Select Category</option>
                                             <option value="Anime">Anime</option>
                                             <option value="Gym">Gym</option>
@@ -392,7 +372,7 @@ export default function StocksPage() {
                                     </div>
                                     <div>
                                         <label className="block text-sm font-medium text-gray-700 mb-1">Sub Category</label>
-                                        <select name="subCategory" value={formData.subCategory} onChange={handleInputChange} className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-teal-500 outline-none">
+                                        <select name="subCategory" value={formData.subCategory} onChange={handleInputChange} className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-neutral-900 outline-none">
                                             <option value="">Select Sub Category</option>
                                             <option value="T-Shirts">T-Shirts</option>
                                             <option value="Hoodies">Hoodies</option>
@@ -403,7 +383,7 @@ export default function StocksPage() {
                                     </div>
                                     <div>
                                         <label className="block text-sm font-medium text-gray-700 mb-1">Unit</label>
-                                        <input name="unit" value={formData.unit} onChange={handleInputChange} className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-teal-500 outline-none" placeholder="e.g. 100g" />
+                                        <input name="unit" value={formData.unit} onChange={handleInputChange} className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-neutral-900 outline-none" placeholder="e.g. 100g" />
                                     </div>
                                     <div>
                                         <label className="block text-sm font-medium text-gray-700 mb-1">Product Image</label>
@@ -426,7 +406,7 @@ export default function StocksPage() {
                                     </div>
                                     <div>
                                         <label className="block text-sm font-medium text-gray-700 mb-1">Status</label>
-                                        <select name="status" value={formData.status} onChange={handleInputChange} className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-teal-500 outline-none">
+                                        <select name="status" value={formData.status} onChange={handleInputChange} className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-neutral-900 outline-none">
                                             <option value="Active">Active</option>
                                             <option value="Not Active">Not Active</option>
                                             <option value="Offer Active">Offer Active</option>
@@ -453,7 +433,7 @@ export default function StocksPage() {
                                                             placeholder="Review Text"
                                                             value={review.text}
                                                             onChange={(e) => handleReviewChange(index, "text", e.target.value)}
-                                                            className="w-full px-3 py-2 border border-gray-200 rounded-lg focus:ring-1 focus:ring-teal-500 outline-none text-sm"
+                                                            className="w-full px-3 py-2 border border-gray-200 rounded-lg focus:ring-1 focus:ring-neutral-900 outline-none text-sm"
                                                             rows={2}
                                                         />
                                                         <div className="flex gap-3">
@@ -461,7 +441,7 @@ export default function StocksPage() {
                                                                 placeholder="Reviewer Name"
                                                                 value={review.reviewer}
                                                                 onChange={(e) => handleReviewChange(index, "reviewer", e.target.value)}
-                                                                className="flex-1 px-3 py-2 border border-gray-200 rounded-lg focus:ring-1 focus:ring-teal-500 outline-none text-sm"
+                                                                className="flex-1 px-3 py-2 border border-gray-200 rounded-lg focus:ring-1 focus:ring-neutral-900 outline-none text-sm"
                                                             />
                                                             <div className="flex items-center gap-2">
                                                                 {review.image && <img src={review.image} alt="Review" className="w-8 h-8 rounded object-cover border" />}
@@ -486,7 +466,7 @@ export default function StocksPage() {
                                         ) : (
                                             <p className="text-xs text-gray-400 italic mb-2">No reviews added yet.</p>
                                         )}
-                                        <button type="button" onClick={addReview} className="text-sm text-teal-700 font-bold hover:underline flex items-center gap-1">
+                                        <button type="button" onClick={addReview} className="text-sm text-neutral-900 font-bold hover:underline flex items-center gap-1">
                                             <Plus size={16} /> Add Review
                                         </button>
                                     </div>
@@ -501,7 +481,7 @@ export default function StocksPage() {
                                                         newRecs[index] = e.target.value;
                                                         setFormData(prev => ({ ...prev, recommendation: newRecs }));
                                                     }}
-                                                    className="flex-1 px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-teal-500 outline-none"
+                                                    className="flex-1 px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-neutral-900 outline-none"
                                                     placeholder="Product ID"
                                                 />
                                                 <button type="button" onClick={() => {
@@ -511,29 +491,33 @@ export default function StocksPage() {
                                                 }} className="text-red-500 hover:bg-red-50 p-2 rounded-lg"><Trash2 size={18} /></button>
                                             </div>
                                         ))}
-                                        <button type="button" onClick={() => setFormData(prev => ({ ...prev, recommendation: [...(prev.recommendation || []), ""] }))} className="text-sm text-teal-700 font-bold hover:underline flex items-center gap-1">
+                                        <button type="button" onClick={() => setFormData(prev => ({ ...prev, recommendation: [...(prev.recommendation || []), ""] }))} className="text-sm text-neutral-900 font-bold hover:underline flex items-center gap-1">
                                             <Plus size={16} /> Add Related Product ID
                                         </button>
                                     </div>
                                     <div>
                                         <label className="block text-sm font-medium text-gray-700 mb-1">Replacement Policy</label>
-                                        <input name="replacementPolicy" value={formData.replacementPolicy} onChange={handleInputChange} className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-teal-500 outline-none" />
+                                        <input name="replacementPolicy" value={formData.replacementPolicy} onChange={handleInputChange} className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-neutral-900 outline-none" />
                                     </div>
-                                    <div className="flex items-center">
+                                    <div className="flex items-center gap-6">
                                         <label className="flex items-center gap-2 cursor-pointer">
-                                            <input type="checkbox" name="freeDelivery" checked={formData.freeDelivery} onChange={handleInputChange} className="w-5 h-5 text-teal-600 rounded focus:ring-teal-500" />
+                                            <input type="checkbox" name="freeDelivery" checked={formData.freeDelivery} onChange={handleInputChange} className="w-5 h-5 text-neutral-900 rounded focus:ring-neutral-900" />
                                             <span className="text-sm font-medium text-gray-700">Free Delivery</span>
+                                        </label>
+                                        <label className="flex items-center gap-2 cursor-pointer">
+                                            <input type="checkbox" name="trending" checked={!!formData.trending} onChange={handleInputChange} className="w-5 h-5 text-yellow-500 rounded focus:ring-yellow-500" />
+                                            <span className="text-sm font-medium text-gray-700">⭐ Show in Trending</span>
                                         </label>
                                     </div>
                                     <div className="col-span-2">
                                         <label className="block text-sm font-medium text-gray-700 mb-2">About This Item (Bullet Points)</label>
                                         {formData.aboutItems?.map((item, index) => (
                                             <div key={index} className="flex gap-2 mb-2">
-                                                <input value={item} onChange={(e) => handleArrayChange(index, e.target.value, "aboutItems")} className="flex-1 px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-teal-500 outline-none" placeholder="Feature point..." />
+                                                <input value={item} onChange={(e) => handleArrayChange(index, e.target.value, "aboutItems")} className="flex-1 px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-neutral-900 outline-none" placeholder="Feature point..." />
                                                 <button type="button" onClick={() => removeArrayItem(index, "aboutItems")} className="p-2 text-red-500 hover:bg-red-50 rounded-lg"><Trash2 size={16} /></button>
                                             </div>
                                         ))}
-                                        <button type="button" onClick={() => addArrayItem("aboutItems")} className="text-sm text-teal-700 font-bold hover:underline flex items-center gap-1">
+                                        <button type="button" onClick={() => addArrayItem("aboutItems")} className="text-sm text-neutral-900 font-bold hover:underline flex items-center gap-1">
                                             <Plus size={16} /> Add Point
                                         </button>
                                     </div>
@@ -542,12 +526,12 @@ export default function StocksPage() {
                                         <label className="block text-sm font-medium text-gray-700 mb-2">Technical Details</label>
                                         {formData.technicalDetails?.map((detail, index) => (
                                             <div key={index} className="flex gap-2 mb-2">
-                                                <input value={detail.label} onChange={(e) => handleTechnicalDetailChange(index, "label", e.target.value)} className="w-1/3 px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-teal-500 outline-none" placeholder="Label (e.g. Material)" />
-                                                <input value={detail.value} onChange={(e) => handleTechnicalDetailChange(index, "value", e.target.value)} className="flex-1 px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-teal-500 outline-none" placeholder="Value (e.g. Cotton)" />
+                                                <input value={detail.label} onChange={(e) => handleTechnicalDetailChange(index, "label", e.target.value)} className="w-1/3 px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-neutral-900 outline-none" placeholder="Label (e.g. Material)" />
+                                                <input value={detail.value} onChange={(e) => handleTechnicalDetailChange(index, "value", e.target.value)} className="flex-1 px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-neutral-900 outline-none" placeholder="Value (e.g. Cotton)" />
                                                 <button type="button" onClick={() => removeTechnicalDetail(index)} className="p-2 text-red-500 hover:bg-red-50 rounded-lg"><Trash2 size={16} /></button>
                                             </div>
                                         ))}
-                                        <button type="button" onClick={addTechnicalDetail} className="text-sm text-teal-700 font-bold hover:underline flex items-center gap-1">
+                                        <button type="button" onClick={addTechnicalDetail} className="text-sm text-neutral-900 font-bold hover:underline flex items-center gap-1">
                                             <Plus size={16} /> Add Technical Detail
                                         </button>
                                     </div>
@@ -556,39 +540,27 @@ export default function StocksPage() {
 
                             {/* SECTION 2: PRICING */}
                             <div>
-                                <h3 className="text-sm font-bold text-gray-900 uppercase tracking-wider mb-4 border-b border-gray-100 pb-2">Pricing & Taxes</h3>
-                                <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+                                <h3 className="text-sm font-bold text-gray-900 uppercase tracking-wider mb-4 border-b border-gray-100 pb-2">Pricing</h3>
+                                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
                                     <div>
                                         <label className="block text-xs font-bold text-gray-500 mb-1">MRP</label>
-                                        <input type="number" name="mrp" value={formData.mrp} onChange={handleInputChange} className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-teal-500 outline-none" />
+                                        <input type="number" name="mrp" value={formData.mrp} onChange={handleInputChange} className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-neutral-900 outline-none" />
                                     </div>
                                     <div>
-                                        <label className="block text-xs font-bold text-teal-700 mb-1">Supplier Price</label>
-                                        <input type="number" name="supplierPrice" value={formData.supplierPrice} onChange={handleInputChange} className="w-full px-4 py-2 border-2 border-teal-100 rounded-lg focus:ring-2 focus:ring-teal-500 outline-none font-bold" />
+                                        <label className="block text-xs font-bold text-neutral-900 mb-1">Sale Price (₹)</label>
+                                        <input type="number" name="supplierPrice" value={formData.supplierPrice} onChange={handleInputChange} className="w-full px-4 py-2 border-2 border-neutral-200 rounded-lg focus:ring-2 focus:ring-neutral-900 outline-none font-bold" />
                                     </div>
-                                    <div>
-                                        <label className="block text-xs font-bold text-gray-500 mb-1">CGST (%)</label>
-                                        <input type="number" name="cgst" value={formData.cgst} onChange={handleInputChange} className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-teal-500 outline-none" />
-                                    </div>
-                                    <div>
-                                        <label className="block text-xs font-bold text-gray-500 mb-1">SGST (%)</label>
-                                        <input type="number" name="sgst" value={formData.sgst} onChange={handleInputChange} className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-teal-500 outline-none" />
-                                    </div>
-                                    <div>
-                                        <label className="block text-xs font-bold text-gray-500 mb-1">Commission</label>
-                                        <input type="number" name="commission" value={formData.commission} onChange={handleInputChange} className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-teal-500 outline-none" />
-                                    </div>
-                                    <div className="col-span-1 md:col-span-2 bg-teal-50 p-4 rounded-xl border border-teal-100 flex flex-col justify-center">
-                                        <label className="block text-xs font-bold text-teal-800 mb-1">Calculated App Price</label>
-                                        <div className="text-3xl font-black text-teal-700">₹{formData.appPrice}</div>
-                                        <p className="text-xs text-teal-600 mt-1 opacity-80">Incl. Taxes & Commission</p>
+                                    <div className="bg-neutral-100 p-4 rounded-xl border border-neutral-200 flex flex-col justify-center">
+                                        <label className="block text-xs font-bold text-neutral-800 mb-1">Final Price</label>
+                                        <div className="text-3xl font-black text-neutral-900">₹{formData.appPrice}</div>
+                                        <p className="text-xs text-neutral-500 mt-1 opacity-80">Shown to customers</p>
                                     </div>
                                 </div>
                             </div>
 
                             <div className="flex justify-end gap-3 pt-6 border-t border-gray-100">
                                 <button type="button" onClick={() => setIsModalOpen(false)} className="px-6 py-2 bg-white text-gray-700 font-bold rounded-lg border border-gray-200 hover:bg-gray-50 transition">Cancel</button>
-                                <button type="submit" className="px-8 py-2 bg-teal-700 text-white font-bold rounded-lg hover:bg-teal-800 transition shadow-lg shadow-teal-900/20 flex items-center gap-2">
+                                <button type="submit" className="px-8 py-2 bg-neutral-900 text-white font-bold rounded-lg hover:bg-neutral-800 transition shadow-lg shadow-neutral-900/20 flex items-center gap-2">
                                     <Save size={18} />
                                     Save Item
                                 </button>

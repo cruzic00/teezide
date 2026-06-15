@@ -1,55 +1,45 @@
 import { NextResponse } from "next/server";
-import { cookies } from "next/headers";
-import clientPromise from "../../../lib/mongodb";
+import { createClient } from "../../../lib/supabase/server";
 
 export async function GET() {
-    const cookieStore = cookies();
-    const authCookie = cookieStore.get("auth_user");
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
 
-    if (!authCookie || !authCookie.value) {
-        return NextResponse.json({ cart: [] });
-    }
+  if (!user) return NextResponse.json({ cart: [] });
 
-    const email = authCookie.value;
+  const { data } = await supabase
+    .from("carts")
+    .select("items")
+    .eq("user_id", user.id)
+    .single();
 
-    try {
-        const client = await clientPromise;
-        const db = client.db("tee_store");
-        const user = await db.collection("users").findOne({ email });
-
-        if (!user) {
-            return NextResponse.json({ cart: [] });
-        }
-
-        return NextResponse.json({ cart: user.cart || [] });
-    } catch (err) {
-        return NextResponse.json({ error: "Failed to fetch cart" }, { status: 500 });
-    }
+  return NextResponse.json({ cart: data?.items ?? [] });
 }
 
 export async function POST(req: Request) {
-    const cookieStore = cookies();
-    const authCookie = cookieStore.get("auth_user");
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
 
-    if (!authCookie || !authCookie.value) {
-        return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
+  if (!user) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
 
-    const email = authCookie.value;
-    const { cart } = await req.json();
+  const { cart } = await req.json();
 
-    try {
-        const client = await clientPromise;
-        const db = client.db("tee_store");
+  const { error } = await supabase.from("carts").upsert({
+    user_id: user.id,
+    items: cart ?? [],
+    updated_at: new Date().toISOString(),
+  });
 
-        // Replace the entire cart array
-        await db.collection("users").updateOne(
-            { email },
-            { $set: { cart, updatedAt: new Date() } }
-        );
+  if (error) {
+    console.error("cart upsert error:", error.message);
+    return NextResponse.json({ error: "Failed to update cart" }, { status: 500 });
+  }
 
-        return NextResponse.json({ success: true });
-    } catch (err) {
-        return NextResponse.json({ error: "Failed to update cart" }, { status: 500 });
-    }
+  return NextResponse.json({ success: true });
 }

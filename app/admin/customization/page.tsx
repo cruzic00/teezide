@@ -1,0 +1,213 @@
+"use client";
+
+import { useEffect, useState } from "react";
+import { Save, Upload, Plus, Trash2, Loader2, GripVertical, Image as ImageIcon, LayoutGrid } from "lucide-react";
+
+type Media = { mediaType: "image" | "video"; mediaUrl: string; title: string; subtitle: string };
+type SectionBlock = { id: string; kind: "section"; title: string; subtitle: string; source: string };
+type BannerBlock = { id: string; kind: "banner"; mediaType: "image" | "video"; mediaUrl: string; title: string; subtitle: string };
+type Block = SectionBlock | BannerBlock;
+type Settings = { hero: Media; blocks: Block[] };
+
+const SOURCES = [
+  { value: "trending", label: "Trending (⭐ marked products)" },
+  { value: "tshirt", label: "T-Shirts" },
+  { value: "anime", label: "Anime" },
+  { value: "gym", label: "Gym" },
+  { value: "college", label: "College" },
+  { value: "mafia", label: "Mafia" },
+  { value: "office", label: "Office" },
+];
+
+async function uploadFile(file: File): Promise<{ url: string; type: "image" | "video" } | null> {
+  const fd = new FormData();
+  fd.append("file", file);
+  const res = await fetch("/api/admin/upload", { method: "POST", body: fd });
+  const data = await res.json();
+  if (!res.ok) {
+    alert(data.error || "Upload failed");
+    return null;
+  }
+  return data;
+}
+
+export default function CustomizationPage() {
+  const [settings, setSettings] = useState<Settings | null>(null);
+  const [saving, setSaving] = useState(false);
+  const [msg, setMsg] = useState<string | null>(null);
+  const [dragIndex, setDragIndex] = useState<number | null>(null);
+
+  useEffect(() => {
+    fetch("/api/admin/settings").then((r) => r.json()).then(setSettings);
+  }, []);
+
+  function patchHero(patch: Partial<Media>) {
+    setSettings((s) => (s ? { ...s, hero: { ...s.hero, ...patch } } : s));
+  }
+
+  function patchBlock(i: number, patch: Partial<Block>) {
+    setSettings((s) => {
+      if (!s) return s;
+      const blocks = [...s.blocks];
+      blocks[i] = { ...blocks[i], ...patch } as Block;
+      return { ...s, blocks };
+    });
+  }
+
+  function addSection() {
+    setSettings((s) =>
+      s ? { ...s, blocks: [...s.blocks, { id: `s${Date.now()}`, kind: "section", title: "New Section", subtitle: "", source: "tshirt" }] } : s
+    );
+  }
+
+  function addBanner() {
+    setSettings((s) =>
+      s ? { ...s, blocks: [...s.blocks, { id: `b${Date.now()}`, kind: "banner", mediaType: "image", mediaUrl: "", title: "New Banner", subtitle: "" }] } : s
+    );
+  }
+
+  function removeBlock(i: number) {
+    setSettings((s) => (s ? { ...s, blocks: s.blocks.filter((_, idx) => idx !== i) } : s));
+  }
+
+  function onDrop(dropIndex: number) {
+    setSettings((s) => {
+      if (!s || dragIndex === null || dragIndex === dropIndex) return s;
+      const blocks = [...s.blocks];
+      const [moved] = blocks.splice(dragIndex, 1);
+      blocks.splice(dropIndex, 0, moved);
+      return { ...s, blocks };
+    });
+    setDragIndex(null);
+  }
+
+  async function save() {
+    if (!settings) return;
+    setSaving(true);
+    setMsg(null);
+    const res = await fetch("/api/admin/settings", {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(settings),
+    });
+    setSaving(false);
+    setMsg(res.ok ? "Saved! Refresh the home page to see changes." : "Failed to save.");
+  }
+
+  if (!settings) return <div className="p-10 text-neutral-500">Loading…</div>;
+
+  return (
+    <div className="p-8 md:p-10 max-w-4xl">
+      <div className="flex items-center justify-between mb-8">
+        <div>
+          <h1 className="text-3xl font-bold text-neutral-900 tracking-tight">Customization</h1>
+          <p className="text-neutral-500 mt-1 text-sm">Drag to reorder · add as many banners and sections as you like.</p>
+        </div>
+        <button onClick={save} disabled={saving} className="flex items-center gap-2 px-6 py-3 bg-neutral-900 text-white font-bold rounded-xl hover:bg-neutral-800 transition disabled:opacity-50">
+          {saving ? <Loader2 size={18} className="animate-spin" /> : <Save size={18} />} Save
+        </button>
+      </div>
+
+      {msg && <div className="mb-6 p-3 rounded-lg bg-neutral-100 text-neutral-700 text-sm font-medium">{msg}</div>}
+
+      {/* HERO */}
+      <div className="bg-white rounded-2xl border border-neutral-200/70 shadow-sm p-6 mb-6">
+        <h2 className="text-lg font-bold text-neutral-900 mb-4">Main Hero Banner</h2>
+        <MediaFields media={settings.hero} onChange={patchHero} />
+      </div>
+
+      {/* BLOCKS */}
+      <div className="flex items-center justify-between mb-3">
+        <h2 className="text-lg font-bold text-neutral-900">Home Blocks</h2>
+        <div className="flex gap-2">
+          <button onClick={addSection} className="flex items-center gap-1 text-sm font-bold text-neutral-900 px-3 py-1.5 rounded-lg border border-neutral-200 hover:bg-neutral-50">
+            <LayoutGrid size={15} /> Add Section
+          </button>
+          <button onClick={addBanner} className="flex items-center gap-1 text-sm font-bold text-neutral-900 px-3 py-1.5 rounded-lg border border-neutral-200 hover:bg-neutral-50">
+            <ImageIcon size={15} /> Add Banner
+          </button>
+        </div>
+      </div>
+
+      <div className="space-y-4">
+        {settings.blocks.map((block, i) => (
+          <div
+            key={block.id}
+            onDragOver={(e) => e.preventDefault()}
+            onDrop={() => onDrop(i)}
+            className={`bg-white rounded-2xl border shadow-sm p-5 transition ${dragIndex === i ? "border-neutral-900 opacity-60" : "border-neutral-200/70"}`}
+          >
+            <div className="flex items-center justify-between mb-4">
+              <div className="flex items-center gap-2">
+                <span
+                  draggable
+                  onDragStart={() => setDragIndex(i)}
+                  onDragEnd={() => setDragIndex(null)}
+                  className="cursor-grab active:cursor-grabbing text-neutral-400 hover:text-neutral-700"
+                  title="Drag to reorder"
+                >
+                  <GripVertical size={20} />
+                </span>
+                <span className="text-xs font-bold uppercase tracking-wider text-neutral-400">
+                  {block.kind === "banner" ? "🖼 Banner" : "▦ Section"}
+                </span>
+              </div>
+              <button onClick={() => removeBlock(i)} className="text-red-500 hover:bg-red-50 p-1.5 rounded">
+                <Trash2 size={16} />
+              </button>
+            </div>
+
+            {block.kind === "section" ? (
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                <input value={block.title} onChange={(e) => patchBlock(i, { title: e.target.value })} placeholder="Title (e.g. Trending Now)" className="px-3 py-2 border border-neutral-200 rounded-lg focus:ring-2 focus:ring-neutral-900 outline-none" />
+                <select value={(block as SectionBlock).source} onChange={(e) => patchBlock(i, { source: e.target.value } as any)} className="px-3 py-2 border border-neutral-200 rounded-lg focus:ring-2 focus:ring-neutral-900 outline-none">
+                  {SOURCES.map((o) => (
+                    <option key={o.value} value={o.value}>{o.label}</option>
+                  ))}
+                </select>
+                <input value={block.subtitle} onChange={(e) => patchBlock(i, { subtitle: e.target.value })} placeholder="Subtitle" className="px-3 py-2 border border-neutral-200 rounded-lg focus:ring-2 focus:ring-neutral-900 outline-none md:col-span-2" />
+              </div>
+            ) : (
+              <MediaFields media={block as BannerBlock} onChange={(p) => patchBlock(i, p)} />
+            )}
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function MediaFields({ media, onChange }: { media: Media; onChange: (p: Partial<Media>) => void }) {
+  const [busy, setBusy] = useState(false);
+  async function handleUpload(file: File) {
+    setBusy(true);
+    const r = await uploadFile(file);
+    setBusy(false);
+    if (r) onChange({ mediaUrl: r.url, mediaType: r.type });
+  }
+  return (
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div className="space-y-3">
+        <input value={media.title} onChange={(e) => onChange({ title: e.target.value })} placeholder="Title" className="w-full px-3 py-2 border border-neutral-200 rounded-lg focus:ring-2 focus:ring-neutral-900 outline-none" />
+        <input value={media.subtitle} onChange={(e) => onChange({ subtitle: e.target.value })} placeholder="Subtitle" className="w-full px-3 py-2 border border-neutral-200 rounded-lg focus:ring-2 focus:ring-neutral-900 outline-none" />
+        <label className="cursor-pointer inline-flex items-center gap-2 px-4 py-2 bg-neutral-100 hover:bg-neutral-200 rounded-lg text-sm font-medium transition">
+          {busy ? <Loader2 size={16} className="animate-spin" /> : <Upload size={16} />} Upload image / video
+          <input type="file" accept="image/*,video/*" className="hidden" onChange={(e) => e.target.files?.[0] && handleUpload(e.target.files[0])} />
+        </label>
+        <input value={media.mediaUrl} onChange={(e) => onChange({ mediaUrl: e.target.value, mediaType: /\.(mp4|webm|ogg)$/i.test(e.target.value) ? "video" : "image" })} placeholder="…or paste a media URL" className="w-full px-3 py-2 border border-neutral-200 rounded-lg text-xs focus:ring-2 focus:ring-neutral-900 outline-none" />
+      </div>
+      <div className="aspect-video rounded-lg overflow-hidden bg-neutral-100 flex items-center justify-center">
+        {media.mediaUrl ? (
+          media.mediaType === "video" ? (
+            <video src={media.mediaUrl} muted loop autoPlay playsInline className="w-full h-full object-cover" />
+          ) : (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img src={media.mediaUrl} alt="preview" className="w-full h-full object-cover" />
+          )
+        ) : (
+          <span className="text-neutral-400 text-sm">No media</span>
+        )}
+      </div>
+    </div>
+  );
+}

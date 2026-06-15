@@ -84,7 +84,7 @@ export default function Banner({ slides }: { slides: Slide[] }) {
   }, [index, isVideo, duration]);
 
   return (
-    <div className="relative w-full h-[65vh] bg-neutral-900 group overflow-hidden">
+    <div className="relative left-1/2 right-1/2 -ml-[50vw] -mr-[50vw] -mt-8 w-screen h-[65vh] bg-neutral-900 group overflow-hidden">
       {/* BACKGROUNDS */}
       {slides.map((slide, i) => (
         <div

@@ -1,106 +1,27 @@
-import { products } from "../../../lib/products"; // Mock data
 import { notFound } from "next/navigation";
-import Image from "next/image";
 import AddToCart from "./parts/AddToCart";
 import ProductGallery from "../../../components/ProductGallery";
-import clientPromise from "../../../lib/mongodb";
-import { ObjectId } from "mongodb";
 import ProductCard from "../../../components/ProductCard";
-
-type Props = {
-  params: {
-    slug: string;
-  };
-};
-
-async function getProduct(slugOrId: string) {
-  // 1. Try to find in MongoDB FIRST
-  const client = await clientPromise;
-  const db = client.db("tee_store");
-
-  let query = {};
-  if (ObjectId.isValid(slugOrId)) {
-    query = { _id: new ObjectId(slugOrId) };
-  } else {
-    query = { slug: slugOrId };
-  }
-
-  let product: any = await db.collection("products").findOne(query);
-
-  // 2. If not in DB, fallback to local mock
-  if (!product) {
-    product = products.find((p) => p.slug === slugOrId || p.id === slugOrId);
-    // Helper to match mongo shape if needed, but the loop below handles transformation
-  }
-
-  if (!product) return null;
-
-  // Fetch related products if any
-  let relatedProducts: any[] = [];
-  if (product.recommendation && product.recommendation.length > 0) {
-    try {
-      // Filter out empty strings and invalid IDs just in case
-      const recIds = product.recommendation.filter((id: string) => id && ObjectId.isValid(id)).map((id: string) => new ObjectId(id));
-      if (recIds.length > 0) {
-        const relatedDocs = await db.collection("products").find({ _id: { $in: recIds } }).toArray();
-        relatedProducts = relatedDocs.map(p => ({
-          id: p._id.toString(),
-          name: p.name,
-          slug: p.slug || p._id.toString(),
-          price: p.price || p.appPrice || 0,
-          image: p.imageUrl || "/placeholder.jpg",
-          description: p.description || "",
-          mrp: p.mrp || 0,
-          sizes: p.subCategory === "Shoes" ? ["7", "8", "9", "10"] : ["S", "M", "L", "XL", "XXL"],
-          colors: ["Black", "White"], // Default
-          rating: p.rating || 0,
-          reviews: p.reviewsCount || 0
-        }));
-      }
-    } catch (e) {
-      console.error("Error fetching related products", e);
-    }
-  }
-
-  // Transform to component-friendly format
-  return {
-    id: product._id.toString(),
-    name: product.name,
-    slug: product.slug || product._id.toString(),
-    description: product.description || `High quality ${product.name}`,
-    price: product.price || product.appPrice || 0, // Handle price variations
-    image: product.imageUrl || "/placeholder.jpg",
-    images: product.images || (product.imageUrl ? [product.imageUrl] : ["/placeholder.jpg"]),
-    sizes: product.subCategory === "Shoes" ? ["7", "8", "9", "10"] : ["S", "M", "L", "XL", "XXL"],
-    colors: ["Black", "White"],
-    inStock: product.status === "Active",
-    aboutItems: product.aboutItems || [],
-    reviewsCount: product.reviewsCount || 0,
-    rating: product.rating || 0,
-    customersSay: product.customersSay,
-    replacementPolicy: product.replacementPolicy || "3 days replacement",
-    freeDelivery: product.freeDelivery !== false,
-    technicalDetails: product.technicalDetails || [],
-    recommendation: product.recommendation,
-    relatedProducts: relatedProducts
-  };
-}
-
-
-
+import { getProductBySlug } from "../../../lib/products-db";
 import Link from "next/link";
 import ReviewForm from "./parts/ReviewForm";
 
+type Props = {
+  params: Promise<{ slug: string }>;
+};
+
 export default async function ProductDetail({ params }: Props) {
-  const product = await getProduct(params.slug);
+  const { slug } = await params;
+  const product = await getProductBySlug(slug);
 
   if (!product) {
     notFound();
   }
 
   return (
-    <>
-      <section className="grid gap-6 md:grid-cols-2 max-w-7xl mx-auto px-8 py-12">
+    <div className="relative left-1/2 right-1/2 -ml-[50vw] -mr-[50vw] w-screen">
+      <div className="max-w-[1500px] mx-auto px-6 lg:px-12">
+      <section className="grid gap-10 md:grid-cols-2 py-12">
         {/* IMAGE GALLERY */}
         <div>
           <ProductGallery
@@ -120,8 +41,20 @@ export default async function ProductDetail({ params }: Props) {
               <span className="text-sm text-neutral-500">{product.reviewsCount || 128} reviews</span>
             </div>
 
-            <div className="text-3xl font-bold text-neutral-900 mb-4">
-              ₹{(product.price / 100).toFixed(2)}
+            <div className="flex items-baseline flex-wrap gap-3 mb-4">
+              <span className="text-3xl font-bold text-neutral-900">
+                ₹{(product.price / 100).toFixed(0)}
+              </span>
+              {product.mrp && product.mrp > product.price && (
+                <>
+                  <span className="text-lg text-neutral-400 line-through">
+                    ₹{(product.mrp / 100).toFixed(0)}
+                  </span>
+                  <span className="text-sm font-bold text-green-600">
+                    {Math.round((1 - product.price / product.mrp) * 100)}% OFF
+                  </span>
+                </>
+              )}
             </div>
 
             <p className="font-medium text-neutral-600 mb-6">{product.description}</p>
@@ -172,7 +105,7 @@ export default async function ProductDetail({ params }: Props) {
         </div>
       </section>
 
-      <section className="max-w-7xl mx-auto px-8 pb-12">
+      <section className="pb-12">
         {/* REVIEWS SECTION */}
         <div className="pt-16 border-t border-neutral-100">
           {/* Header */}
@@ -241,7 +174,7 @@ export default async function ProductDetail({ params }: Props) {
       {/* RELATED PRODUCTS (Recommendations) */}
       {
         product.relatedProducts && product.relatedProducts.length > 0 && (
-          <section className="max-w-7xl mx-auto px-8 py-12 border-t border-neutral-100">
+          <section className="py-12 border-t border-neutral-100">
             <div className="flex items-center justify-between mb-10">
               <h3 className="text-2xl md:text-3xl font-black text-neutral-900 uppercase tracking-tight">You Might Also Like</h3>
               <Link href="/products" className="hidden md:block text-sm font-bold text-neutral-500 hover:text-neutral-900 transition-colors uppercase tracking-widest border-b border-transparent hover:border-neutral-900 pb-0.5">View All</Link>
@@ -255,6 +188,7 @@ export default async function ProductDetail({ params }: Props) {
           </section>
         )
       }
-    </>
+      </div>
+    </div>
   );
 }

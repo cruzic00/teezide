@@ -1,49 +1,101 @@
 "use client";
-import React from "react";
 
-type CartItem = {
-  id: string;
-  name: string;
-  image: string;
-  price: number; // paisa
-  size?: string;
-  qty: number;
-};
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { useCart } from "../lib/cart";
+import { useAuth } from "../app/context/AuthContext";
 
-export default function CheckoutButton({ items }: { items: CartItem[] }) {
+declare global {
+  interface Window {
+    Razorpay: any;
+  }
+}
+
+function loadRazorpayScript(): Promise<boolean> {
+  return new Promise((resolve) => {
+    if (typeof window !== "undefined" && window.Razorpay) return resolve(true);
+    const script = document.createElement("script");
+    script.src = "https://checkout.razorpay.com/v1/checkout.js";
+    script.onload = () => resolve(true);
+    script.onerror = () => resolve(false);
+    document.body.appendChild(script);
+  });
+}
+
+export default function CheckoutButton({
+  className = "px-6 py-3 bg-black text-white rounded",
+  label = "PROCEED TO BUY",
+}: {
+  className?: string;
+  label?: string;
+}) {
+  const { items, total, clear } = useCart();
+  const { user } = useAuth();
+  const router = useRouter();
+  const [loading, setLoading] = useState(false);
+
   async function startCheckout() {
+    if (!user) {
+      router.push("/login?redirect=/cart");
+      return;
+    }
+    if (items.length === 0) return;
+
+    setLoading(true);
     try {
-      const res = await fetch("/api/checkout", {
+      const ok = await loadRazorpayScript();
+      if (!ok) throw new Error("Failed to load payment SDK. Check your connection.");
+
+      const res = await fetch("/api/checkout/razorpay", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ items }),
+        body: JSON.stringify({ amount: total }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data?.error || "Checkout failed");
+
+      const rzp = new window.Razorpay({
+        key: data.keyId,
+        amount: data.amount,
+        currency: "INR",
+        name: "Teezide",
+        description: `${items.length} item(s)`,
+        order_id: data.orderId,
+        prefill: { name: user.name, email: user.email },
+        theme: { color: "#000000" },
+        handler: async (response: any) => {
+          const verifyRes = await fetch("/api/checkout/verify", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ ...response, items, total }),
+          });
+          if (verifyRes.ok) {
+            clear();
+            router.push("/checkout/success");
+          } else {
+            router.push("/checkout/cancel");
+          }
+        },
+        modal: {
+          ondismiss: () => setLoading(false),
+        },
       });
 
-      if (!res.ok) {
-        const errBody = await res.json().catch(() => ({ error: "unknown" }));
-        throw new Error(errBody?.error || `Status ${res.status}`);
-      }
+      rzp.on("payment.failed", () => {
+        setLoading(false);
+        router.push("/checkout/cancel");
+      });
 
-      const data = await res.json();
-      if (data?.url) {
-        // browser redirect to stripe checkout
-        window.location.href = data.url;
-        return;
-      }
-      throw new Error("No session url returned");
-    } catch (err: any) {
-      console.error("Checkout failed:", err);
-      // show friendly error to user
-      alert("Checkout failed: " + (err?.message ?? err));
+      rzp.open();
+    } catch (e: any) {
+      alert(e?.message || "Checkout failed");
+      setLoading(false);
     }
   }
 
   return (
-    <button
-      onClick={startCheckout}
-      className="px-4 py-2 rounded bg-black text-white hover:opacity-90"
-    >
-      Checkout
+    <button onClick={startCheckout} disabled={loading} className={className}>
+      {loading ? "Processing..." : label}
     </button>
   );
 }

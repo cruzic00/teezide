@@ -1,51 +1,44 @@
-import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
-import clientPromise from "../../lib/mongodb";
-import Sidebar from "./_components/Sidebar"; // Client component we will create
+import { createClient } from "../../lib/supabase/server";
+import Sidebar from "./_components/Sidebar";
 
 export default async function AdminLayout({
-    children,
+  children,
 }: {
-    children: React.ReactNode;
+  children: React.ReactNode;
 }) {
-    const cookieStore = cookies();
-    const authCookie = cookieStore.get("auth_user");
-    const email = authCookie?.value;
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
 
-    if (!email) {
-        redirect("/login?redirect=/admin");
-    }
+  if (!user) {
+    redirect("/login?redirect=/admin");
+  }
 
-    const client = await clientPromise;
-    const db = client.db("tee_store");
+  const { data: profile } = await supabase
+    .from("profiles")
+    .select("name, role, avatar_url")
+    .eq("id", user.id)
+    .single();
 
-    const user = await db.collection("users").findOne(
-        { email },
-        { projection: { role: 1, username: 1, email: 1, profilePicture: 1 } }
-    );
+  if (!profile || profile.role !== "admin") {
+    redirect("/");
+  }
 
-    if (!user || user.role !== "admin") {
-        redirect("/");
-    }
+  const adminUser = {
+    username: profile.name || "Admin",
+    email: user.email ?? "",
+    profilePicture: profile.avatar_url || "",
+  };
 
-    // Pass necessary user data to sidebar
-    const adminUser = {
-        username: user.username || "Admin",
-        email: user.email,
-        profilePicture: user.profilePicture || "",
-    }
+  return (
+    <div className="min-h-screen bg-neutral-50 flex font-sans text-neutral-900">
+      <aside className="w-72 bg-neutral-900 text-white flex-col hidden md:flex shadow-2xl z-20 sticky top-0 h-screen">
+        <Sidebar user={adminUser} />
+      </aside>
 
-    return (
-        <div className="min-h-screen bg-neutral-100 flex font-sans text-neutral-900">
-            {/* Sidebar - Desktop */}
-            <aside className="w-72 bg-neutral-900 text-white flex-col hidden md:flex shadow-2xl z-20 sticky top-0 h-screen">
-                <Sidebar user={adminUser} />
-            </aside>
-
-            {/* Main Content */}
-            <main className="flex-1 relative overflow-y-auto">
-                {children}
-            </main>
-        </div>
-    );
+      <main className="flex-1 relative overflow-y-auto">{children}</main>
+    </div>
+  );
 }

@@ -1,7 +1,5 @@
 import { NextResponse } from "next/server";
-import bcrypt from "bcryptjs";
-import clientPromise from "../../../../lib/mongodb";
-import { cookies } from "next/headers";
+import { createClient } from "../../../../lib/supabase/server";
 
 export async function POST(req: Request) {
   try {
@@ -14,57 +12,28 @@ export async function POST(req: Request) {
       );
     }
 
-    const client = await clientPromise;
-    const db = client.db("tee_store");
+    const supabase = await createClient();
+    const { data, error } = await supabase.auth.signInWithPassword({
+      email,
+      password,
+    });
 
-    const user = await db.collection("users").findOne({ email });
-
-    if (!user) {
+    if (error || !data.user) {
       return NextResponse.json(
-        { error: "Invalid credentials" },
+        { error: error?.message || "Invalid credentials" },
         { status: 401 }
       );
     }
 
-    // 🔑 SUPPORT BOTH PASSWORD FIELDS
-    const hashedPassword =
-      user.password || user.passwordHash;
+    const { data: profile } = await supabase
+      .from("profiles")
+      .select("role")
+      .eq("id", data.user.id)
+      .single();
 
-    if (!hashedPassword) {
-      console.error("User has no password field:", user.email);
-      return NextResponse.json(
-        { error: "Account misconfigured" },
-        { status: 500 }
-      );
-    }
-
-    const match = await bcrypt.compare(password, hashedPassword);
-
-    if (!match) {
-      return NextResponse.json(
-        { error: "Invalid credentials" },
-        { status: 401 }
-      );
-    }
-
-    // ✅ SET COOKIE
-    cookies().set({
-      name: "auth_user",
-      value: user.email,
-      httpOnly: true,
-      sameSite: "lax",
-      path: "/",
-    });
-
-    return NextResponse.json({
-      success: true,
-      role: user.role,
-    });
+    return NextResponse.json({ success: true, role: profile?.role ?? "user" });
   } catch (err) {
     console.error("LOGIN ERROR:", err);
-    return NextResponse.json(
-      { error: "Server error" },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: "Server error" }, { status: 500 });
   }
 }

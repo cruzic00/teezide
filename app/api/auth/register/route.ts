@@ -1,6 +1,5 @@
 import { NextResponse } from "next/server";
-import bcrypt from "bcryptjs";
-import clientPromise from "../../../../lib/mongodb";
+import { createClient } from "../../../../lib/supabase/server";
 
 export async function POST(req: Request) {
   try {
@@ -13,34 +12,24 @@ export async function POST(req: Request) {
       );
     }
 
-    const client = await clientPromise;
-    const db = client.db("tee_store"); // 🔥 IMPORTANT
-    const users = db.collection("users");
-
-    const existingUser = await users.findOne({ email });
-    if (existingUser) {
-      return NextResponse.json(
-        { error: "User already exists" },
-        { status: 409 }
-      );
-    }
-
-    const hashedPassword = await bcrypt.hash(password, 10);
-
-    await users.insertOne({
-      name,
+    const supabase = await createClient();
+    const { data, error } = await supabase.auth.signUp({
       email,
-      password: hashedPassword,
-      role: "user",
-      createdAt: new Date(),
+      password,
+      options: { data: { name } },
     });
 
-    return NextResponse.json({ success: true }, { status: 201 });
+    if (error) {
+      return NextResponse.json({ error: error.message }, { status: 400 });
+    }
+
+    // If email confirmation is disabled, a session is created and the user is
+    // already signed in. Otherwise they must confirm via email before login.
+    const needsConfirmation = !data.session;
+
+    return NextResponse.json({ success: true, needsConfirmation }, { status: 201 });
   } catch (err) {
-    console.error(err);
-    return NextResponse.json(
-      { error: "Server error" },
-      { status: 500 }
-    );
+    console.error("REGISTER ERROR:", err);
+    return NextResponse.json({ error: "Server error" }, { status: 500 });
   }
 }

@@ -1,7 +1,7 @@
 // lib/cart.tsx (Updated)
 "use client";
 
-import { createContext, useContext, useEffect, useMemo, useState } from "react";
+import { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react";
 import { useAuth } from "../app/context/AuthContext";
 
 type CartItem = {
@@ -87,7 +87,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
   }, [items, user, isInitialized]);
 
 
-  const addItem: CartContextValue["addItem"] = (item) => {
+  const addItem: CartContextValue["addItem"] = useCallback((item) => {
     setItems(prev => {
       const idx = prev.findIndex(p => p.id === item.id && p.size === item.size);
       if (idx >= 0) {
@@ -97,21 +97,24 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
       }
       return [...prev, { ...item, qty: 1 }];
     });
-  };
+  }, []);
 
-  const removeItem = (id: string, size: string) => {
+  const removeItem = useCallback((id: string, size: string) => {
     setItems(prev => prev.filter(p => !(p.id === id && p.size === size)));
-  };
+  }, []);
 
-  const updateQty = (id: string, size: string, qty: number) => {
+  const updateQty = useCallback((id: string, size: string, qty: number) => {
     setItems(prev => prev.map(p => (p.id === id && p.size === size ? { ...p, qty } : p)));
-  };
+  }, []);
 
-  const clear = () => setItems([]);
+  const clear = useCallback(() => setItems([]), []);
 
   const total = useMemo(() => items.reduce((sum, it) => sum + it.price * it.qty, 0), [items]);
 
-  const value: CartContextValue = { items, total, addItem, removeItem, updateQty, clear };
+  const value: CartContextValue = useMemo(
+    () => ({ items, total, addItem, removeItem, updateQty, clear }),
+    [items, total, addItem, removeItem, updateQty, clear]
+  );
 
   return <CartContext.Provider value={value}>{children}</CartContext.Provider>;
 }
