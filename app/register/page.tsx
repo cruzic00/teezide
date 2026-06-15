@@ -63,7 +63,7 @@ function RegisterForm() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-r from-purple-600 to-indigo-600">
+    <div className="min-h-[80vh] flex items-center justify-center bg-gradient-to-r from-purple-600 to-indigo-600 rounded-2xl">
       <form
         onSubmit={handleRegister}
         className="bg-white rounded-xl p-8 w-[360px] space-y-4 shadow-lg"

@@ -12,9 +12,11 @@ export async function POST(req: Request) {
       );
     }
 
+    const cleanEmail = String(email).trim().toLowerCase();
+
     const supabase = await createClient();
     const { data, error } = await supabase.auth.signUp({
-      email,
+      email: cleanEmail,
       password,
       options: { data: { name } },
     });

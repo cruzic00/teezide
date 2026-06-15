@@ -1,5 +1,6 @@
 import { getAllUsers } from "../../../lib/admin-data";
 import { PageHeader, Card, Badge, Th } from "../_components/AdminUI";
+import DeleteUserButton from "./DeleteUserButton";
 
 export default async function UsersPage() {
   const users = await getAllUsers();
@@ -18,6 +19,7 @@ export default async function UsersPage() {
               <Th>User</Th>
               <Th>Role</Th>
               <Th>Joined</Th>
+              <Th className="text-right">Actions</Th>
             </tr>
           </thead>
           <tbody className="divide-y divide-neutral-100">
@@ -39,6 +41,9 @@ export default async function UsersPage() {
                 </td>
                 <td className="px-6 py-4 text-neutral-500">
                   {new Date(u.created_at).toLocaleDateString()}
+                </td>
+                <td className="px-6 py-4 text-right">
+                  <DeleteUserButton id={u.id} email={u.email} />
                 </td>
               </tr>
             ))}
