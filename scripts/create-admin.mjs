@@ -5,8 +5,8 @@ import { readFileSync } from "node:fs";
 import { createClient } from "@supabase/supabase-js";
 
 // ---- Admin credentials (change if you like) ----
-const ADMIN_EMAIL = "kgbresorts@gmail.com";
-const ADMIN_PASSWORD = "Teezide@2026";
+const ADMIN_EMAIL = "admin@gmail.com";
+const ADMIN_PASSWORD = "password123";
 const ADMIN_NAME = "Admin";
 // -------------------------------------------------
 

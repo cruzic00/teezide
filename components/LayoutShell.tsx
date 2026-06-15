@@ -15,7 +15,7 @@ export default function LayoutShell({ children }: { children: React.ReactNode })
     return <>{children}</>;
   }
 
-  const hideFooter = pathname === "/cart";
+  const hideFooter = ["/cart", "/login", "/register"].includes(pathname || "");
 
   return (
     <>
