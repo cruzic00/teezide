@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { getAllOrders } from "../../../lib/admin-data";
 import { PageHeader, Card, Badge, Th, EmptyState } from "../_components/AdminUI";
 
@@ -31,8 +32,18 @@ export default async function AdminOrdersPage() {
                 );
                 return (
                   <tr key={o.id} className="hover:bg-neutral-50/60 transition-colors">
-                    <td className="px-6 py-4 font-mono text-xs text-neutral-500">
-                      #{String(o.id).slice(0, 8)}
+                    <td className="px-6 py-4">
+                      <Link href={`/admin/orders/${o.id}`} className="flex items-center gap-3 group">
+                        {/* eslint-disable-next-line @next/next/no-img-element */}
+                        <img
+                          src={o.items?.[0]?.image || "/placeholder.png"}
+                          alt=""
+                          className="w-10 h-10 rounded object-cover border border-neutral-200 shrink-0"
+                        />
+                        <span className="font-mono text-xs text-neutral-500 group-hover:text-neutral-900 underline-offset-2 group-hover:underline">
+                          #{String(o.id).slice(0, 8)}
+                        </span>
+                      </Link>
                     </td>
                     <td className="px-6 py-4 font-medium text-neutral-900">{o.userEmail}</td>
                     <td className="px-6 py-4 text-neutral-600">{count} item(s)</td>

@@ -9,6 +9,7 @@ type OrderItem = {
   price: number; // paisa
   qty: number;
   size?: string;
+  image?: string;
 };
 
 type Order = {
@@ -17,6 +18,7 @@ type Order = {
   total: number; // paisa
   payment: { status?: string };
   status: string;
+  shipping?: { tracking?: string };
   created_at: string;
 };
 
@@ -64,17 +66,30 @@ export default function OrdersPage() {
               <span className="font-semibold">₹{(order.total / 100).toFixed(2)}</span>
             </div>
 
-            <div className="space-y-2">
+            <div className="space-y-3">
               {order.items.map((item, index) => (
-                <div key={index} className="flex justify-between text-sm">
-                  <span>
+                <div key={index} className="flex items-center gap-3 text-sm">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
+                    src={item.image || "/placeholder.png"}
+                    alt={item.name}
+                    className="w-12 h-12 rounded object-cover border border-neutral-200 shrink-0"
+                  />
+                  <span className="flex-1">
                     {item.name}
                     {item.size ? ` (${item.size})` : ""} × {item.qty}
                   </span>
-                  <span>₹{(item.price / 100).toFixed(2)}</span>
+                  <span className="font-medium">₹{(item.price / 100).toFixed(2)}</span>
                 </div>
               ))}
             </div>
+
+            {order.shipping?.tracking && (
+              <div className="mt-4 p-3 rounded-lg bg-neutral-50 text-sm">
+                <span className="text-neutral-500">Tracking: </span>
+                <strong className="font-mono">{order.shipping.tracking}</strong>
+              </div>
+            )}
 
             <div className="flex justify-between mt-4 text-sm">
               <span>
