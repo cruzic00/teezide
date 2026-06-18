@@ -85,6 +85,23 @@ export async function getProductBySlug(slug: string) {
       .eq("product_id", data.id)
       .order("created_at", { ascending: false });
 
+    // Similar products from the same category (fall back to any others).
+    let { data: related } = await supabase
+      .from("products")
+      .select("*")
+      .ilike("category", data.category ?? "")
+      .neq("id", data.id)
+      .limit(8);
+
+    if (!related || related.length === 0) {
+      const res = await supabase
+        .from("products")
+        .select("*")
+        .neq("id", data.id)
+        .limit(8);
+      related = res.data;
+    }
+
     return {
       ...product,
       customersSay: (reviews ?? []).map((r) => ({
@@ -94,7 +111,7 @@ export async function getProductBySlug(slug: string) {
         rating: r.rating,
         createdAt: r.created_at,
       })),
-      relatedProducts: [] as any[],
+      relatedProducts: (related ?? []).map(mapProduct),
     };
   } catch (e) {
     console.error("getProductBySlug failed:", e);
