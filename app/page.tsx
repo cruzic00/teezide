@@ -12,24 +12,26 @@ function productsForSource(all: any[], source: string) {
 
 function ProductSection({ block, products }: { block: SectionBlock; products: any[] }) {
   return (
-    <div className="p-6 space-y-10 pt-14">
-      <div className="text-center space-y-2 mb-4">
-        <h2 className="text-3xl md:text-4xl font-black uppercase tracking-[0.2em] text-primary">
-          {block.title}
-        </h2>
-        <div className="w-24 h-1 bg-accent mx-auto" />
-        {block.subtitle && (
-          <p className="text-gray-500 font-medium tracking-wide uppercase text-sm">{block.subtitle}</p>
-        )}
+    <section className="relative left-1/2 right-1/2 -ml-[50vw] -mr-[50vw] w-screen">
+      <div className="max-w-[1600px] mx-auto px-5 lg:px-10 py-14">
+        <div className="text-center space-y-2 mb-10">
+          <h2 className="text-3xl md:text-4xl font-black uppercase tracking-[0.2em] text-primary">
+            {block.title}
+          </h2>
+          <div className="w-24 h-1 bg-accent mx-auto" />
+          {block.subtitle && (
+            <p className="text-gray-500 font-medium tracking-wide uppercase text-sm">{block.subtitle}</p>
+          )}
+        </div>
+        <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-x-6 gap-y-12">
+          {products.length === 0 ? (
+            <p className="col-span-full text-center text-neutral-400">No products yet.</p>
+          ) : (
+            products.map((p) => <ProductCard key={p.id} product={p as any} />)
+          )}
+        </div>
       </div>
-      <div className="grid grid-cols-1 gap-x-8 gap-y-14 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-        {products.length === 0 ? (
-          <p className="col-span-full text-center text-neutral-400">No products yet.</p>
-        ) : (
-          products.map((p) => <ProductCard key={p.id} product={p as any} />)
-        )}
-      </div>
-    </div>
+    </section>
   );
 }
 
