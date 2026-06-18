@@ -41,7 +41,7 @@ export default function Navbar() {
   }
 
   return (
-    <nav className="sticky top-0 z-50 bg-[#f4eedd]/95 backdrop-blur-xl border-b border-black/5 shadow-sm transition-all duration-300">
+    <nav className="sticky top-0 z-50 bg-secondary border-b border-black/5 shadow-sm transition-all duration-300">
       <div className="max-w-7xl mx-auto px-6 py-2 flex justify-between items-center">
         {/* LEFT: LOGO */}
         <div className="flex-shrink-0">

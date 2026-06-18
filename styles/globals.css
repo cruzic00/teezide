@@ -38,7 +38,7 @@ nav a:hover::after {
   --card-outline-strong: rgb(255, 255, 255);
 
   --primary: #000000;
-  --secondary: #f4eedd;
+  --secondary: #fffbf0;
   --accent: #D4AF37;
   --accent-dark: #B5952F;
 }
