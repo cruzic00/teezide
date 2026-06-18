@@ -26,6 +26,10 @@ export type Product = {
   colors?: string[];
   category?: string;
   subCategory?: string;
+  productType?: string;
+  fabric?: string;
+  fit?: string;
+  closure?: string;
   imageUrl?: string;
   relatedProducts?: any[];
 };

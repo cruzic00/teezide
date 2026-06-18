@@ -5,6 +5,7 @@ import ProductCard from "../../../components/ProductCard";
 import { getProductBySlug } from "../../../lib/products-db";
 import Link from "next/link";
 import ReviewForm from "./parts/ReviewForm";
+import ShareButton from "./parts/ShareButton";
 
 type Props = {
   params: Promise<{ slug: string }>;
@@ -33,7 +34,10 @@ export default async function ProductDetail({ params }: Props) {
         {/* DETAILS */}
         <div className="space-y-6">
           <div>
-            <h1 className="text-3xl font-extrabold text-neutral-900 mb-2">{product.name}</h1>
+            <div className="flex items-start justify-between gap-4 mb-2">
+              <h1 className="text-3xl font-extrabold text-neutral-900">{product.name}</h1>
+              <ShareButton title={product.name} />
+            </div>
             <div className="flex items-center gap-2 mb-4">
               <div className="flex text-yellow-400">
                 {"★".repeat(Math.round(product.rating || 4.5))}{"☆".repeat(5 - Math.round(product.rating || 4.5))}
@@ -56,6 +60,7 @@ export default async function ProductDetail({ params }: Props) {
                 </>
               )}
             </div>
+            <p className="text-xs text-neutral-500 -mt-2 mb-4">Inclusive of all taxes</p>
 
             <p className="font-medium text-neutral-600 mb-6">{product.description}</p>
           </div>
@@ -71,36 +76,33 @@ export default async function ProductDetail({ params }: Props) {
               </div>
             )}
             <div className="flex items-center gap-2 text-sm font-medium text-neutral-700">
-              <span className="p-2 bg-neutral-100 rounded-full">🔄</span> {product.replacementPolicy}
+              <span className="p-2 bg-neutral-100 rounded-full">🔄</span> 7 Days Returns &amp; Exchange
             </div>
           </div>
 
-          {/* ABOUT ITEMS */}
-          {product.aboutItems && product.aboutItems.length > 0 && (
-            <div>
-              <h3 className="font-bold text-neutral-900 mb-2">About this item</h3>
-              <ul className="list-disc pl-5 space-y-1 text-sm text-neutral-600">
-                {product.aboutItems.map((item: string, i: number) => (
-                  <li key={i}>{item}</li>
-                ))}
-              </ul>
-            </div>
-          )}
-
-          {/* TECHNICAL DETAILS */}
-          {product.technicalDetails && product.technicalDetails.length > 0 && (
-            <div>
-              <h3 className="font-bold text-neutral-900 mb-2">Technical Details</h3>
-              <div className="bg-neutral-50 rounded-lg p-4 text-sm">
-                {product.technicalDetails.map((detail: any, i: number) => (
-                  <div key={i} className="flex justify-between py-1 border-b border-neutral-200 last:border-0">
-                    <span className="text-neutral-500">{detail.label}</span>
-                    <span className="font-medium text-neutral-900">{detail.value}</span>
-                  </div>
-                ))}
+          {/* PRODUCT DETAILS */}
+          {(() => {
+            const rows = [
+              ["Product Category", product.category],
+              ["Product Type", (product as any).productType],
+              ["Fabric", (product as any).fabric],
+              ["Fit", (product as any).fit],
+              ["Closure", (product as any).closure],
+            ].filter(([, v]) => v);
+            return rows.length > 0 ? (
+              <div>
+                <h3 className="font-bold text-neutral-900 mb-2">Product Details</h3>
+                <div className="bg-neutral-50 rounded-lg p-4 text-sm">
+                  {rows.map(([label, value]) => (
+                    <div key={label as string} className="flex justify-between py-1.5 border-b border-neutral-200 last:border-0">
+                      <span className="text-neutral-500">{label}</span>
+                      <span className="font-medium text-neutral-900 capitalize">{value}</span>
+                    </div>
+                  ))}
+                </div>
               </div>
-            </div>
-          )}
+            ) : null;
+          })()}
 
         </div>
       </section>

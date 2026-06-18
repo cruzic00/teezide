@@ -44,6 +44,10 @@ function toAdminShape(row: any) {
     technicalDetails: row.technical_details ?? [],
     recommendation: meta.recommendation ?? [],
     trending: meta.trending ?? false,
+    productType: meta.productType ?? "",
+    fabric: meta.fabric ?? "",
+    fit: meta.fit ?? "",
+    closure: meta.closure ?? "",
   };
 }
 
@@ -75,6 +79,10 @@ function toDbColumns(body: any) {
       recommendation: body.recommendation ?? [],
       customersSay: body.customersSay ?? [],
       trending: body.trending ?? false,
+      productType: body.productType ?? "",
+      fabric: body.fabric ?? "",
+      fit: body.fit ?? "",
+      closure: body.closure ?? "",
     },
     updated_at: new Date().toISOString(),
   };

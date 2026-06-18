@@ -9,6 +9,10 @@ type Product = {
     brand: string;
     category: string;
     subCategory: string;
+    productType?: string;
+    fabric?: string;
+    fit?: string;
+    closure?: string;
     unit: string;
     mrp: number; // Maximum Retail Price
     supplierPrice: number;
@@ -36,6 +40,10 @@ const EMPTY_PRODUCT: Product = {
     brand: "Teezide",
     category: "",
     subCategory: "",
+    productType: "",
+    fabric: "",
+    fit: "",
+    closure: "",
     unit: "1pc",
     mrp: 0,
     supplierPrice: 0,
@@ -137,7 +145,7 @@ export default function StocksPage() {
 
         setFormData(prev => ({
             ...prev,
-            [name]: name === "name" || name === "brand" || name === "category" || name === "subCategory" || name === "unit" || name === "status" || name === "imageUrl" || name === "replacementPolicy"
+            [name]: name === "name" || name === "brand" || name === "category" || name === "subCategory" || name === "productType" || name === "fabric" || name === "fit" || name === "closure" || name === "unit" || name === "status" || name === "imageUrl" || name === "replacementPolicy"
                 ? value
                 : Number(value)
         }));
@@ -460,6 +468,30 @@ export default function StocksPage() {
                                     </label>
                                 </div>
                                 <p className="text-xs text-gray-400 mt-2">Shown on the product page alongside the main image.</p>
+                            </div>
+
+                            {/* SPECIFICATIONS */}
+                            <div>
+                                <h3 className="text-sm font-bold text-gray-900 uppercase tracking-wider mb-4 border-b border-gray-100 pb-2">Specifications</h3>
+                                <p className="text-xs text-gray-400 mb-4">Shown as &quot;Product Details&quot; on the product page (Category comes from above).</p>
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                    <div>
+                                        <label className="block text-sm font-medium text-gray-700 mb-1">Product Type</label>
+                                        <input name="productType" value={formData.productType || ""} onChange={handleInputChange} placeholder="e.g. Oversized T-shirt" className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-neutral-900 outline-none" />
+                                    </div>
+                                    <div>
+                                        <label className="block text-sm font-medium text-gray-700 mb-1">Fabric</label>
+                                        <input name="fabric" value={formData.fabric || ""} onChange={handleInputChange} placeholder="e.g. 100% Cotton" className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-neutral-900 outline-none" />
+                                    </div>
+                                    <div>
+                                        <label className="block text-sm font-medium text-gray-700 mb-1">Fit</label>
+                                        <input name="fit" value={formData.fit || ""} onChange={handleInputChange} placeholder="e.g. Oversized / Regular" className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-neutral-900 outline-none" />
+                                    </div>
+                                    <div>
+                                        <label className="block text-sm font-medium text-gray-700 mb-1">Closure</label>
+                                        <input name="closure" value={formData.closure || ""} onChange={handleInputChange} placeholder="e.g. Pullover" className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-neutral-900 outline-none" />
+                                    </div>
+                                </div>
                             </div>
 
                             {/* SECTION 1.5: ADDITIONAL DETAILS */}
