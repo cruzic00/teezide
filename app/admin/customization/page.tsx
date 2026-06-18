@@ -7,7 +7,7 @@ type Media = { mediaType: "image" | "video"; mediaUrl: string; title: string; su
 type SectionBlock = { id: string; kind: "section"; title: string; subtitle: string; source: string };
 type BannerBlock = { id: string; kind: "banner"; mediaType: "image" | "video"; mediaUrl: string; title: string; subtitle: string };
 type Block = SectionBlock | BannerBlock;
-type Settings = { hero: Media; blocks: Block[] };
+type Settings = { heroSlides: Media[]; marquee: string[]; blocks: Block[] };
 
 const SOURCES = [
   { value: "trending", label: "Trending (⭐ marked products)" },
@@ -41,8 +41,40 @@ export default function CustomizationPage() {
     fetch("/api/admin/settings").then((r) => r.json()).then(setSettings);
   }, []);
 
-  function patchHero(patch: Partial<Media>) {
-    setSettings((s) => (s ? { ...s, hero: { ...s.hero, ...patch } } : s));
+  function patchHeroSlide(i: number, patch: Partial<Media>) {
+    setSettings((s) => {
+      if (!s) return s;
+      const heroSlides = [...s.heroSlides];
+      heroSlides[i] = { ...heroSlides[i], ...patch };
+      return { ...s, heroSlides };
+    });
+  }
+
+  function addHeroSlide() {
+    setSettings((s) =>
+      s ? { ...s, heroSlides: [...s.heroSlides, { mediaType: "image", mediaUrl: "", title: "", subtitle: "" }] } : s
+    );
+  }
+
+  function removeHeroSlide(i: number) {
+    setSettings((s) => (s ? { ...s, heroSlides: s.heroSlides.filter((_, idx) => idx !== i) } : s));
+  }
+
+  function updateMarquee(i: number, val: string) {
+    setSettings((s) => {
+      if (!s) return s;
+      const marquee = [...s.marquee];
+      marquee[i] = val;
+      return { ...s, marquee };
+    });
+  }
+
+  function addMarquee() {
+    setSettings((s) => (s ? { ...s, marquee: [...s.marquee, "New text"] } : s));
+  }
+
+  function removeMarquee(i: number) {
+    setSettings((s) => (s ? { ...s, marquee: s.marquee.filter((_, idx) => idx !== i) } : s));
   }
 
   function patchBlock(i: number, patch: Partial<Block>) {
@@ -110,10 +142,45 @@ export default function CustomizationPage() {
 
       {msg && <div className="mb-6 p-3 rounded-lg bg-neutral-100 text-neutral-700 text-sm font-medium">{msg}</div>}
 
-      {/* HERO */}
+      {/* MARQUEE */}
       <div className="bg-white rounded-2xl border border-neutral-200/70 shadow-sm p-6 mb-6">
-        <h2 className="text-lg font-bold text-neutral-900 mb-4">Main Hero Banner</h2>
-        <MediaFields media={settings.hero} onChange={patchHero} />
+        <div className="flex items-center justify-between mb-4">
+          <h2 className="text-lg font-bold text-neutral-900">Top Marquee Strip</h2>
+          <button onClick={addMarquee} className="flex items-center gap-1 text-sm font-bold text-neutral-900 px-3 py-1.5 rounded-lg border border-neutral-200 hover:bg-neutral-50">
+            <Plus size={15} /> Add Text
+          </button>
+        </div>
+        <div className="space-y-2">
+          {settings.marquee.map((text, i) => (
+            <div key={i} className="flex gap-2">
+              <input value={text} onChange={(e) => updateMarquee(i, e.target.value)} className="flex-1 px-3 py-2 border border-neutral-200 rounded-lg focus:ring-2 focus:ring-neutral-900 outline-none" />
+              <button onClick={() => removeMarquee(i)} className="text-red-500 hover:bg-red-50 px-3 rounded-lg"><Trash2 size={16} /></button>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* HERO SLIDES */}
+      <div className="flex items-center justify-between mb-3">
+        <h2 className="text-lg font-bold text-neutral-900">Main Hero Banner</h2>
+        <button onClick={addHeroSlide} className="flex items-center gap-1 text-sm font-bold text-neutral-900 px-3 py-1.5 rounded-lg border border-neutral-200 hover:bg-neutral-50">
+          <ImageIcon size={15} /> Add Slide
+        </button>
+      </div>
+      <div className="space-y-4 mb-8">
+        {settings.heroSlides.map((slide, i) => (
+          <div key={i} className="bg-white rounded-2xl border border-neutral-200/70 shadow-sm p-5">
+            <div className="flex items-center justify-between mb-3">
+              <span className="text-xs font-bold uppercase tracking-wider text-neutral-400">Slide {i + 1}</span>
+              {settings.heroSlides.length > 1 && (
+                <button onClick={() => removeHeroSlide(i)} className="text-red-500 hover:bg-red-50 p-1.5 rounded">
+                  <Trash2 size={16} />
+                </button>
+              )}
+            </div>
+            <MediaFields media={slide} onChange={(p) => patchHeroSlide(i, p)} />
+          </div>
+        ))}
       </div>
 
       {/* BLOCKS */}

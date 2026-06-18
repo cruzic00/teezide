@@ -30,7 +30,8 @@ export type BannerBlock = {
 export type Block = SectionBlock | BannerBlock;
 
 export type HomeSettings = {
-  hero: Media;
+  heroSlides: Media[];
+  marquee: string[];
   blocks: Block[];
 };
 
@@ -41,13 +42,23 @@ export const DEFAULT_HERO: Media = {
   subtitle: "Watch the lookbook",
 };
 
+export const DEFAULT_MARQUEE = [
+  "New Drop Available",
+  "Limited Stock",
+  "Free Shipping on Orders Over ₹999",
+];
+
 export const DEFAULT_BLOCKS: Block[] = [
   { id: "trending", kind: "section", title: "Trending Now", subtitle: "Curated top picks for you", source: "trending" },
   { id: "vibe", kind: "banner", mediaType: "video", mediaUrl: "/media/hero.mp4", title: "Wear The Vibe", subtitle: "Premium drops · Limited stock" },
   { id: "tshirts", kind: "section", title: "T-Shirts", subtitle: "Everyday essentials", source: "tshirt" },
 ];
 
-export const DEFAULT_SETTINGS: HomeSettings = { hero: DEFAULT_HERO, blocks: DEFAULT_BLOCKS };
+export const DEFAULT_SETTINGS: HomeSettings = {
+  heroSlides: [DEFAULT_HERO],
+  marquee: DEFAULT_MARQUEE,
+  blocks: DEFAULT_BLOCKS,
+};
 
 // Builds the blocks list, migrating from the older {sections, vibe} shape if needed.
 export function normalizeBlocks(d: any): Block[] {
@@ -65,8 +76,16 @@ export function normalizeBlocks(d: any): Block[] {
 }
 
 export function normalizeSettings(d: any): HomeSettings {
+  const heroSlides =
+    Array.isArray(d?.heroSlides) && d.heroSlides.length
+      ? d.heroSlides
+      : d?.hero
+        ? [{ ...DEFAULT_HERO, ...d.hero }]
+        : [DEFAULT_HERO];
+
   return {
-    hero: { ...DEFAULT_HERO, ...(d?.hero ?? {}) },
+    heroSlides,
+    marquee: Array.isArray(d?.marquee) && d.marquee.length ? d.marquee : DEFAULT_MARQUEE,
     blocks: normalizeBlocks(d),
   };
 }

@@ -64,16 +64,16 @@ function BannerBlockView({ block }: { block: BannerBlock }) {
 export default async function Home() {
   const [all, settings] = await Promise.all([getProducts(), getHomeSettings()]);
 
-  const heroSlide = {
-    type: settings.hero.mediaType,
-    src: settings.hero.mediaUrl,
-    title: settings.hero.title,
-    subtitle: settings.hero.subtitle,
-  };
+  const heroSlides = settings.heroSlides.map((m) => ({
+    type: m.mediaType,
+    src: m.mediaUrl,
+    title: m.title,
+    subtitle: m.subtitle,
+  }));
 
   return (
     <main className="space-y-10">
-      <Banner slides={[heroSlide]} />
+      <Banner slides={heroSlides} />
 
       {settings.blocks.map((block) =>
         block.kind === "banner" ? (

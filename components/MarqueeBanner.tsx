@@ -2,12 +2,10 @@
 
 import React from "react";
 
-const MarqueeBanner = () => {
-    const items = [
-        "New Drop Available",
-        "Limited Stock",
-        "Free Shipping on Orders Over ₹999",
-    ];
+const MarqueeBanner = ({ items: itemsProp }: { items?: string[] }) => {
+    const items = itemsProp && itemsProp.length
+        ? itemsProp
+        : ["New Drop Available", "Limited Stock", "Free Shipping on Orders Over ₹999"];
 
     return (
         <div className="bg-black text-white overflow-hidden py-2 relative z-50">

@@ -2,22 +2,25 @@ import "../styles/globals.css";
 import React from "react";
 import Providers from "./providers";
 import LayoutShell from "../components/LayoutShell";
+import { getHomeSettings } from "../lib/settings";
 
 export const metadata = {
   title: "Teezide",
   description: "Customize your T-shirt with your designs",
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  const settings = await getHomeSettings();
+
   return (
     <html lang="en">
       <body className="bg-secondary text-primary antialiased font-sans">
         <Providers>
-          <LayoutShell>{children}</LayoutShell>
+          <LayoutShell marquee={settings.marquee}>{children}</LayoutShell>
         </Providers>
       </body>
     </html>

@@ -7,7 +7,13 @@ import MarqueeBanner from "./MarqueeBanner";
 
 // Renders the customer-site chrome (marquee, navbar, footer, constrained main)
 // for normal pages, but nothing for /admin — the admin panel has its own layout.
-export default function LayoutShell({ children }: { children: React.ReactNode }) {
+export default function LayoutShell({
+  children,
+  marquee,
+}: {
+  children: React.ReactNode;
+  marquee?: string[];
+}) {
   const pathname = usePathname();
   const isAdmin = pathname?.startsWith("/admin");
 
@@ -19,7 +25,7 @@ export default function LayoutShell({ children }: { children: React.ReactNode })
 
   return (
     <>
-      <MarqueeBanner />
+      <MarqueeBanner items={marquee} />
       <Navbar />
       <main className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-8">{children}</main>
       {!hideFooter && <Footer />}
