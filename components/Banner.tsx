@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import Link from "next/link";
 import { useEffect, useMemo, useRef, useState } from "react";
 
 type Slide = {
@@ -151,9 +152,13 @@ export default function Banner({ slides }: { slides: Slide[] }) {
             </div>
           )}
 
-          <button className="mt-10 px-12 py-4 bg-white text-black text-sm font-black uppercase tracking-widest hover:bg-accent hover:scale-105 transition-all duration-300 animate-in zoom-in fade-in duration-1000 delay-500">
+          <Link
+            href="/products"
+            suppressHydrationWarning
+            className="mt-10 inline-block px-12 py-4 bg-white text-black text-sm font-black uppercase tracking-widest hover:bg-accent hover:scale-105 transition-all duration-300 animate-in zoom-in fade-in duration-1000 delay-500"
+          >
             Shop The Collection
-          </button>
+          </Link>
         </div>
       )}
 
