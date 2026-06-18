@@ -41,12 +41,12 @@ export default function Navbar() {
   }
 
   return (
-    <nav className="sticky top-0 z-50 bg-white/60 backdrop-blur-xl border-b border-white/30 shadow-sm transition-all duration-300">
+    <nav className="sticky top-0 z-50 bg-[#f4eedd]/95 backdrop-blur-xl border-b border-black/5 shadow-sm transition-all duration-300">
       <div className="max-w-7xl mx-auto px-6 py-2 flex justify-between items-center">
         {/* LEFT: LOGO */}
         <div className="flex-shrink-0">
           <Link href="/" className="group flex items-center gap-2">
-            <img src="/media/loggo.jpeg" alt="Teezide" className="h-10 w-auto object-contain mix-blend-multiply transition-transform group-hover:scale-105" />
+            <img src="/media/loggo.jpeg" alt="Teezide" className="h-10 w-auto object-contain transition-transform group-hover:scale-105" />
           </Link>
         </div>
 
