@@ -1,17 +1,8 @@
 "use client";
 
-import { useState } from "react";
 import { FaInstagram, FaLinkedinIn, FaTwitter, FaWhatsapp } from "react-icons/fa";
 
 export default function Footer() {
-  const [email, setEmail] = useState("");
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    console.log("Subscribed:", email);
-    setEmail("");
-  };
-
   return (           //footer bg color
     <footer className="bg-primary text-gray-300">
       <div className="max-w-7xl mx-auto px-6 py-16">
@@ -19,29 +10,23 @@ export default function Footer() {
         <div className="grid lg:grid-cols-2 gap-10 items-center ">
           <div>
             <h2 className="text-5xl font-extrabold leading-tight text-white mb-4">
-              JOIN OUR <br /> FAM TeeVo.in
+              JOIN OUR <br /> FAM Mellobebe.com
             </h2>
             <p className="mt-4 text-gray-400">
-              Get exclusive updates and early access to drops.
+              Premium drops, delivered to your door.
             </p>
           </div>
 
-          <form onSubmit={handleSubmit} className="flex flex-col sm:flex-row gap-4">
-            <input
-              type="email"
-              placeholder="your@email.com"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              required
-              className="flex-1 px-4 py-3 rounded-md bg-white/10 border border-white/20 text-white placeholder:text-gray-500 focus:outline-none focus:border-accent transition-colors"
-            />
-            <button
-              type="submit"
-              className="bg-accent hover:bg-accent-dark px-6 py-3 rounded-md text-black font-bold shadow-lg transition-all transform hover:-translate-y-0.5"
+          <div className="sm:text-right">
+            <p className="text-sm uppercase tracking-[0.3em] text-gray-400 mb-2">For Enquiries</p>
+            <a
+              href="mailto:hello@mellobebe.com"
+              className="text-2xl md:text-3xl font-bold text-white hover:text-accent transition-colors break-all"
             >
-              SUBSCRIBE
-            </button>
-          </form>
+              hello@mellobebe.com
+            </a>
+            <p className="mt-3 text-gray-400 text-sm">We usually reply within 24 hours.</p>
+          </div>
         </div>
 
         {/* Socials */}

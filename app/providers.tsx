@@ -3,6 +3,7 @@
 import { AuthProvider } from "./context/AuthContext";
 import { CartProvider } from "../lib/cart";
 import { ToastProvider } from "../components/ToastProvider";
+import SmoothScroll from "../components/SmoothScroll";
 
 export default function Providers({
   children,
@@ -10,12 +11,14 @@ export default function Providers({
   children: React.ReactNode;
 }) {
   return (
-    <AuthProvider>
-      <ToastProvider>
-        <CartProvider>
-          {children}
-        </CartProvider>
-      </ToastProvider>
-    </AuthProvider>
+    <SmoothScroll>
+      <AuthProvider>
+        <ToastProvider>
+          <CartProvider>
+            {children}
+          </CartProvider>
+        </ToastProvider>
+      </AuthProvider>
+    </SmoothScroll>
   );
 }
