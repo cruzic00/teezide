@@ -20,7 +20,7 @@ export default async function RootLayout({
     <html lang="en">
       <body className="bg-secondary text-primary antialiased font-sans">
         <Providers>
-          <LayoutShell marquee={settings.marquee}>{children}</LayoutShell>
+          <LayoutShell marquee={settings.marquee} nav={settings.nav}>{children}</LayoutShell>
         </Providers>
       </body>
     </html>

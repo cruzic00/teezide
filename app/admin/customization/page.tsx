@@ -7,7 +7,8 @@ type Media = { mediaType: "image" | "video"; mediaUrl: string; title: string; su
 type SectionBlock = { id: string; kind: "section"; title: string; subtitle: string; source: string };
 type BannerBlock = { id: string; kind: "banner"; mediaType: "image" | "video"; mediaUrl: string; title: string; subtitle: string };
 type Block = SectionBlock | BannerBlock;
-type Settings = { heroSlides: Media[]; marquee: string[]; blocks: Block[] };
+type NavItem = { name: string; href: string };
+type Settings = { heroSlides: Media[]; marquee: string[]; nav: NavItem[]; blocks: Block[] };
 
 const SOURCES = [
   { value: "trending", label: "Trending (⭐ marked products)" },
@@ -75,6 +76,23 @@ export default function CustomizationPage() {
 
   function removeMarquee(i: number) {
     setSettings((s) => (s ? { ...s, marquee: s.marquee.filter((_, idx) => idx !== i) } : s));
+  }
+
+  function updateNav(i: number, patch: Partial<NavItem>) {
+    setSettings((s) => {
+      if (!s) return s;
+      const nav = [...s.nav];
+      nav[i] = { ...nav[i], ...patch };
+      return { ...s, nav };
+    });
+  }
+
+  function addNav() {
+    setSettings((s) => (s ? { ...s, nav: [...s.nav, { name: "NEW LINK", href: "/" }] } : s));
+  }
+
+  function removeNav(i: number) {
+    setSettings((s) => (s ? { ...s, nav: s.nav.filter((_, idx) => idx !== i) } : s));
   }
 
   function patchBlock(i: number, patch: Partial<Block>) {
@@ -155,6 +173,28 @@ export default function CustomizationPage() {
             <div key={i} className="flex gap-2">
               <input value={text} onChange={(e) => updateMarquee(i, e.target.value)} className="flex-1 px-3 py-2 border border-neutral-200 rounded-lg focus:ring-2 focus:ring-neutral-900 outline-none" />
               <button onClick={() => removeMarquee(i)} className="text-red-500 hover:bg-red-50 px-3 rounded-lg"><Trash2 size={16} /></button>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* NAVIGATION */}
+      <div className="bg-white rounded-2xl border border-neutral-200/70 shadow-sm p-6 mb-6">
+        <div className="flex items-center justify-between mb-4">
+          <div>
+            <h2 className="text-lg font-bold text-neutral-900">Navigation Menu</h2>
+            <p className="text-xs text-neutral-400 mt-0.5">Top navbar links. Href is the page path (e.g. /anime).</p>
+          </div>
+          <button onClick={addNav} className="flex items-center gap-1 text-sm font-bold text-neutral-900 px-3 py-1.5 rounded-lg border border-neutral-200 hover:bg-neutral-50">
+            <Plus size={15} /> Add Link
+          </button>
+        </div>
+        <div className="space-y-2">
+          {settings.nav.map((item, i) => (
+            <div key={i} className="flex gap-2">
+              <input value={item.name} onChange={(e) => updateNav(i, { name: e.target.value })} placeholder="Label (e.g. ANIME)" className="flex-1 px-3 py-2 border border-neutral-200 rounded-lg focus:ring-2 focus:ring-neutral-900 outline-none" />
+              <input value={item.href} onChange={(e) => updateNav(i, { href: e.target.value })} placeholder="/path" className="flex-1 px-3 py-2 border border-neutral-200 rounded-lg focus:ring-2 focus:ring-neutral-900 outline-none font-mono text-sm" />
+              <button onClick={() => removeNav(i)} className="text-red-500 hover:bg-red-50 px-3 rounded-lg"><Trash2 size={16} /></button>
             </div>
           ))}
         </div>

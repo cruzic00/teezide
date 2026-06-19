@@ -7,7 +7,18 @@ import { useAuth } from "../app/context/AuthContext";
 import { useState, useRef, useEffect } from "react";
 import { useCart } from "../lib/cart";
 
-export default function Navbar() {
+const DEFAULT_LINKS = [
+  { name: "HOME", href: "/" },
+  { name: "NEW ARRIVALS", href: "/products" },
+  { name: "ANIME", href: "/anime" },
+  { name: "GYM", href: "/gym" },
+  { name: "COLLEGE", href: "/college" },
+  { name: "MAFIA", href: "/mafia" },
+  { name: "OFFICE", href: "/office" },
+];
+
+export default function Navbar({ links }: { links?: { name: string; href: string }[] }) {
+  const navLinks = links && links.length ? links : DEFAULT_LINKS;
   const { user, loading } = useAuth();
   const { items } = useCart();
   const pathname = usePathname();
@@ -52,15 +63,7 @@ export default function Navbar() {
 
         {/* CENTER: NAV LINKS */}
         <div className="hidden lg:flex items-center gap-10 text-sm font-bold tracking-widest text-primary">
-          {[
-            { name: "HOME", href: "/" },
-            { name: "NEW ARRIVALS", href: "/products" },
-            { name: "ANIME", href: "/anime" },
-            { name: "GYM", href: "/gym" },
-            { name: "COLLEGE", href: "/college" },
-            { name: "MAFIA", href: "/mafia" },
-            { name: "OFFICE", href: "/office" },
-          ].map((link) => (
+          {navLinks.map((link) => (
             <Link
               key={link.name}
               href={link.href}

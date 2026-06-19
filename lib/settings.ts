@@ -32,6 +32,7 @@ export type Block = SectionBlock | BannerBlock;
 export type HomeSettings = {
   heroSlides: Media[];
   marquee: string[];
+  nav: NavItem[];
   blocks: Block[];
 };
 
@@ -46,6 +47,18 @@ export const DEFAULT_MARQUEE = [
   "New Drop Available",
   "Limited Stock",
   "Free Shipping on Orders Over ₹999",
+];
+
+export type NavItem = { name: string; href: string };
+
+export const DEFAULT_NAV: NavItem[] = [
+  { name: "HOME", href: "/" },
+  { name: "NEW ARRIVALS", href: "/products" },
+  { name: "ANIME", href: "/anime" },
+  { name: "GYM", href: "/gym" },
+  { name: "COLLEGE", href: "/college" },
+  { name: "MAFIA", href: "/mafia" },
+  { name: "OFFICE", href: "/office" },
 ];
 
 export type Category = { name: string; subCategories: string[] };
@@ -68,6 +81,7 @@ export const DEFAULT_BLOCKS: Block[] = [
 export const DEFAULT_SETTINGS: HomeSettings = {
   heroSlides: [DEFAULT_HERO],
   marquee: DEFAULT_MARQUEE,
+  nav: DEFAULT_NAV,
   blocks: DEFAULT_BLOCKS,
 };
 
@@ -97,6 +111,7 @@ export function normalizeSettings(d: any): HomeSettings {
   return {
     heroSlides,
     marquee: Array.isArray(d?.marquee) && d.marquee.length ? d.marquee : DEFAULT_MARQUEE,
+    nav: Array.isArray(d?.nav) && d.nav.length ? d.nav : DEFAULT_NAV,
     blocks: normalizeBlocks(d),
   };
 }

@@ -10,9 +10,11 @@ import MarqueeBanner from "./MarqueeBanner";
 export default function LayoutShell({
   children,
   marquee,
+  nav,
 }: {
   children: React.ReactNode;
   marquee?: string[];
+  nav?: { name: string; href: string }[];
 }) {
   const pathname = usePathname();
   const isAdmin = pathname?.startsWith("/admin");
@@ -26,7 +28,7 @@ export default function LayoutShell({
   return (
     <>
       <MarqueeBanner items={marquee} />
-      <Navbar />
+      <Navbar links={nav} />
       <main className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-8">{children}</main>
       {!hideFooter && <Footer />}
     </>
