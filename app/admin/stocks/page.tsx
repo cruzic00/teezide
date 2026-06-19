@@ -68,6 +68,7 @@ export default function StocksPage() {
     const [products, setProducts] = useState<Product[]>([]);
     const [loading, setLoading] = useState(true);
     const [searchTerm, setSearchTerm] = useState("");
+    const [categoryFilter, setCategoryFilter] = useState("");
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [editingId, setEditingId] = useState<string | null>(null);
     const [formData, setFormData] = useState<Product>(EMPTY_PRODUCT);
@@ -260,10 +261,19 @@ export default function StocksPage() {
         setIsModalOpen(true);
     }
 
-    const filteredProducts = products.filter(p =>
-        (p.name || "").toLowerCase().includes(searchTerm.toLowerCase()) ||
-        (p.brand || "").toLowerCase().includes(searchTerm.toLowerCase())
-    );
+    const categories = Array.from(
+        new Set(products.map(p => (p.category || "").trim()).filter(Boolean))
+    ).sort();
+
+    const filteredProducts = products.filter(p => {
+        const q = searchTerm.toLowerCase();
+        const matchesSearch =
+            (p.name || "").toLowerCase().includes(q) ||
+            (p.brand || "").toLowerCase().includes(q);
+        const matchesCategory =
+            !categoryFilter || (p.category || "").toLowerCase() === categoryFilter.toLowerCase();
+        return matchesSearch && matchesCategory;
+    });
 
     return (
         <div className="p-2 md:p-4 min-h-screen bg-gray-50 text-gray-900 font-sans w-full">
@@ -299,12 +309,15 @@ export default function StocksPage() {
                         onChange={e => setSearchTerm(e.target.value)}
                     />
                 </div>
-                {/* Placeholders for other filters */}
-                <select className="border border-gray-200 rounded-xl px-6 py-3 text-base focus:outline-none">
-                    <option>All Categories</option>
-                </select>
-                <select className="border border-gray-200 rounded-xl px-6 py-3 text-base focus:outline-none">
-                    <option>All Brands</option>
+                <select
+                    value={categoryFilter}
+                    onChange={e => setCategoryFilter(e.target.value)}
+                    className="border border-gray-200 rounded-xl px-6 py-3 text-base focus:outline-none focus:ring-2 focus:ring-neutral-900 capitalize"
+                >
+                    <option value="">All Categories</option>
+                    {categories.map(c => (
+                        <option key={c} value={c} className="capitalize">{c}</option>
+                    ))}
                 </select>
             </div>
 
