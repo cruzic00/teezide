@@ -9,7 +9,7 @@ import { useAuth } from "../app/context/AuthContext";
 // directly as Cash on Delivery. The Razorpay routes are still in the codebase
 // (app/api/checkout/*) and can be re-enabled later.
 export default function CheckoutButton({
-  className = "px-6 py-3 bg-black text-white rounded",
+  className = "px-6 py-3 bg-[#623903] text-white rounded",
   label = "PROCEED TO BUY",
 }: {
   className?: string;

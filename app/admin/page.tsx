@@ -47,11 +47,11 @@ export default async function AdminDashboard() {
       {/* HEADER */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-bold text-neutral-900">Dashboard Overview</h1>
+          <h1 className="text-3xl font-bold text-[#623903]">Dashboard Overview</h1>
           <p className="text-neutral-500 mt-1">Welcome back, here's what's happening today.</p>
         </div>
         <div className="flex gap-3">
-          <Link href="/admin/stocks" className="px-4 py-2 bg-black text-white rounded-lg text-sm font-semibold hover:bg-neutral-800 transition shadow-lg shadow-neutral-900/20">
+          <Link href="/admin/stocks" className="px-4 py-2 bg-[#623903] text-white rounded-lg text-sm font-semibold hover:bg-[#7a4a05] transition shadow-lg shadow-[#623903]/20">
             Manage Products
           </Link>
         </div>
@@ -71,7 +71,7 @@ export default async function AdminDashboard() {
             </div>
             <div>
               <p className="text-neutral-500 text-sm font-semibold uppercase tracking-wider">{stat.title}</p>
-              <h3 className="text-3xl font-extrabold text-neutral-900 mt-1">{stat.value}</h3>
+              <h3 className="text-3xl font-extrabold text-[#623903] mt-1">{stat.value}</h3>
             </div>
           </div>
         ))}
@@ -98,12 +98,12 @@ export default async function AdminDashboard() {
                     <ShoppingBag size={18} />
                   </div>
                   <div className="flex-1 min-w-0">
-                    <p className="font-bold text-neutral-900 truncate">{order.userEmail}</p>
+                    <p className="font-bold text-[#623903] truncate">{order.userEmail}</p>
                     <p className="text-xs text-neutral-500">
                       {new Date(order.created_at).toLocaleDateString()} · <span className="capitalize">{order.status}</span>
                     </p>
                   </div>
-                  <div className="font-bold text-neutral-900">₹{(order.total / 100).toFixed(2)}</div>
+                  <div className="font-bold text-[#623903]">₹{(order.total / 100).toFixed(2)}</div>
                 </div>
               ))
             )}

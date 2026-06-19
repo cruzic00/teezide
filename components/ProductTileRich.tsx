@@ -65,7 +65,7 @@ export default function ProductCard({ product }: { product: CardProduct }) {
       <div className="grid gap-3">
         {/* ✅ Clickable card: image + title + price */}
         <Link href={`/products/${product.slug}`} className="group block">
-          <div className="aspect-square bg-neutral-900 rounded-xl overflow-hidden ring-1 ring-transparent group-hover:ring-yellow-500 transition">
+          <div className="aspect-square bg-[#623903] rounded-xl overflow-hidden ring-1 ring-transparent group-hover:ring-yellow-500 transition">
             <Image
               src={product.image}
               alt={product.name}
@@ -78,7 +78,7 @@ export default function ProductCard({ product }: { product: CardProduct }) {
 
 
           <div className="mt-2">
-            <div className="font-extrabold text-yellow-500 bg-transparent hover:text-black  rounded-md text-black font-semibold ">
+            <div className="font-extrabold text-yellow-500 bg-transparent hover:text-[#623903]  rounded-md text-[#623903] font-semibold ">
               {product.name}
             </div>
             <div className="text-neutral-400 text-sm">
@@ -100,7 +100,7 @@ export default function ProductCard({ product }: { product: CardProduct }) {
         <button
           type="button"
           onClick={() => setOpen(true)}
-          className="text-black bg-white hover:bg-yellow-500 px-6 py-3 rounded-md text-black font-semibold shadow btn"
+          className="text-[#623903] bg-white hover:bg-yellow-500 px-6 py-3 rounded-md text-[#623903] font-semibold shadow btn"
         >
           ADD TO CART
         </button>
@@ -108,7 +108,7 @@ export default function ProductCard({ product }: { product: CardProduct }) {
         {/* ✅ Modal */}
         {open && (
           <div className="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm grid place-items-center p-4">
-            <div className="w-[92vw] max-w-4xl bg-white text-black rounded-2xl p-5 relative">
+            <div className="w-[92vw] max-w-4xl bg-white text-[#623903] rounded-2xl p-5 relative">
               <button
                 type="button"
                 onClick={() => setOpen(false)}
@@ -120,7 +120,7 @@ export default function ProductCard({ product }: { product: CardProduct }) {
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 {/* Left: image */}
-                <div className="rounded-xl overflow-hidden ring-1 ring-neutral-800/50">
+                <div className="rounded-xl overflow-hidden ring-1 ring-[#7a4a05]/50">
                   <Image
                     src={product.image}
                     alt={product.name}
@@ -153,7 +153,7 @@ export default function ProductCard({ product }: { product: CardProduct }) {
                         className={`px-4 py-2 rounded-lg border transition 
                         ${selSize === s
                             ? "bg-yellow-500 text-white border-yellow-500 text-extrabold"
-                            : "text-black bg-white hover:bg-yellow-500 px-6 py-3 rounded-md text-black font-extrabold shadow btn"
+                            : "text-[#623903] bg-white hover:bg-yellow-500 px-6 py-3 rounded-md text-[#623903] font-extrabold shadow btn"
                           }`}
                       >
                         {s}
@@ -164,7 +164,7 @@ export default function ProductCard({ product }: { product: CardProduct }) {
                   <button
                     type="button"
                     onClick={addToCart}
-                    className="text-black bg-black hover:bg-yellow-500 px-6 py-3 rounded-md text-white font-bold shadow btn"
+                    className="text-[#623903] bg-[#623903] hover:bg-yellow-500 px-6 py-3 rounded-md text-white font-bold shadow btn"
                   >
                     Add to cart
                   </button>
@@ -172,7 +172,7 @@ export default function ProductCard({ product }: { product: CardProduct }) {
                   {/* Optional deep link */}
                   <Link
                     href={`/products/${product.slug}`}
-                    className="text-black bg-black hover:bg-yellow-500 px-6 py-3 rounded-md text-white font-bold shadow btn"
+                    className="text-[#623903] bg-[#623903] hover:bg-yellow-500 px-6 py-3 rounded-md text-white font-bold shadow btn"
                   >
                     View full details
                   </Link>

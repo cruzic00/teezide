@@ -29,7 +29,7 @@ export default async function ProfileEditPage() {
 
   return (
     <div className="py-8">
-      <Link href="/profile" className="inline-flex items-center gap-1 text-sm font-medium text-neutral-500 hover:text-neutral-900 mb-6">
+      <Link href="/profile" className="inline-flex items-center gap-1 text-sm font-medium text-neutral-500 hover:text-[#623903] mb-6">
         <ChevronLeft size={16} /> Back to account
       </Link>
       <ProfileForm initialUser={initialUser} />

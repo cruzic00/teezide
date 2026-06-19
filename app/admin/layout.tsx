@@ -33,8 +33,8 @@ export default async function AdminLayout({
   };
 
   return (
-    <div className="min-h-screen bg-neutral-50 flex font-sans text-neutral-900">
-      <aside className="w-72 bg-neutral-900 text-white flex-col hidden md:flex shadow-2xl z-20 sticky top-0 h-screen">
+    <div className="min-h-screen bg-neutral-50 flex font-sans text-[#623903]">
+      <aside className="w-72 bg-[#623903] text-white flex-col hidden md:flex shadow-2xl z-20 sticky top-0 h-screen">
         <Sidebar user={adminUser} />
       </aside>
 

@@ -12,7 +12,7 @@ export default async function AdminPaymentsPage() {
   const pending = payments.length - paid.length;
 
   const stats = [
-    { label: "Total Value", value: `₹${(total / 100).toLocaleString()}`, icon: IndianRupee, tint: "bg-neutral-900 text-white" },
+    { label: "Total Value", value: `₹${(total / 100).toLocaleString()}`, icon: IndianRupee, tint: "bg-[#623903] text-white" },
     { label: "Collected", value: `₹${(collected / 100).toLocaleString()}`, icon: CheckCircle2, tint: "bg-emerald-50 text-emerald-700" },
     { label: "Transactions", value: payments.length, icon: Receipt, tint: "bg-blue-50 text-blue-700" },
     { label: "Pending", value: pending, icon: Clock, tint: "bg-amber-50 text-amber-700" },
@@ -29,7 +29,7 @@ export default async function AdminPaymentsPage() {
             <div className={`w-10 h-10 rounded-xl flex items-center justify-center mb-3 ${s.tint}`}>
               <s.icon size={20} />
             </div>
-            <p className="text-2xl font-extrabold text-neutral-900">{s.value}</p>
+            <p className="text-2xl font-extrabold text-[#623903]">{s.value}</p>
             <p className="text-xs text-neutral-500 uppercase tracking-wider font-semibold mt-0.5">{s.label}</p>
           </div>
         ))}
@@ -53,8 +53,8 @@ export default async function AdminPaymentsPage() {
             <tbody className="divide-y divide-neutral-100">
               {payments.map((p: any) => (
                 <tr key={p.id} className="hover:bg-neutral-50/60 transition-colors">
-                  <td className="px-6 py-4 font-medium text-neutral-900">{p.userEmail}</td>
-                  <td className="px-6 py-4 font-bold text-neutral-900">₹{(p.total / 100).toFixed(2)}</td>
+                  <td className="px-6 py-4 font-medium text-[#623903]">{p.userEmail}</td>
+                  <td className="px-6 py-4 font-bold text-[#623903]">₹{(p.total / 100).toFixed(2)}</td>
                   <td className="px-6 py-4 uppercase text-xs font-semibold text-neutral-600">{p.payment?.provider}</td>
                   <td className="px-6 py-4">
                     <Badge value={p.payment?.status ?? p.status} />

@@ -34,7 +34,7 @@ export default function Error({
                         // Attempt to recover by trying to re-render the segment
                         () => reset()
                     }
-                    className="bg-black text-white px-6 py-2 rounded-lg font-semibold hover:bg-neutral-800 transition"
+                    className="bg-[#623903] text-white px-6 py-2 rounded-lg font-semibold hover:bg-[#7a4a05] transition"
                 >
                     Try again
                 </button>

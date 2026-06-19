@@ -13,13 +13,13 @@ export default function CheckoutCancelPage() {
         <div className="flex flex-col gap-3 w-full">
           <Link
             href="/cart"
-            className="w-full py-3 bg-black text-white font-bold rounded-lg hover:bg-neutral-800 transition shadow-lg"
+            className="w-full py-3 bg-[#623903] text-white font-bold rounded-lg hover:bg-[#7a4a05] transition shadow-lg"
           >
             Back to Cart
           </Link>
           <Link
             href="/"
-            className="w-full py-3 bg-gray-100 text-black font-bold rounded-lg hover:bg-gray-200 transition"
+            className="w-full py-3 bg-gray-100 text-[#623903] font-bold rounded-lg hover:bg-gray-200 transition"
           >
             Continue Shopping
           </Link>

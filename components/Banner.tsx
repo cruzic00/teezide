@@ -61,7 +61,7 @@ export default function Banner({ slides }: { slides: Slide[] }) {
   }, [index, isVideo]);
 
   return (
-    <div className="relative left-1/2 right-1/2 -ml-[50vw] -mr-[50vw] -mt-8 w-screen h-[80vh] bg-neutral-900 group overflow-hidden">
+    <div className="relative left-1/2 right-1/2 -ml-[50vw] -mr-[50vw] -mt-8 w-screen h-[80vh] bg-[#623903] group overflow-hidden">
       {/* BACKGROUNDS */}
       {slides.map((slide, i) => (
         <div
@@ -133,7 +133,7 @@ export default function Banner({ slides }: { slides: Slide[] }) {
           <Link
             href="/products"
             suppressHydrationWarning
-            className="mt-10 inline-block px-12 py-4 bg-white text-black text-sm font-black uppercase tracking-widest hover:bg-accent hover:scale-105 transition-all duration-300 animate-in zoom-in fade-in duration-1000 delay-500"
+            className="mt-10 inline-block px-12 py-4 bg-white text-[#623903] text-sm font-black uppercase tracking-widest hover:bg-accent hover:scale-105 transition-all duration-300 animate-in zoom-in fade-in duration-1000 delay-500"
           >
             Shop The Collection
           </Link>

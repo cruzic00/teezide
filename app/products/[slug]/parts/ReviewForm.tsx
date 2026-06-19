@@ -18,7 +18,7 @@ export default function ReviewForm({ productId }: { productId: string }) {
         <>
             <button
                 onClick={() => setIsOpen(true)}
-                className="px-6 py-3 bg-neutral-900 text-white font-bold rounded-full hover:bg-neutral-800 transition-colors shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 active:translate-y-0"
+                className="px-6 py-3 bg-[#623903] text-white font-bold rounded-full hover:bg-[#7a4a05] transition-colors shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 active:translate-y-0"
             >
                 Write a Review
             </button>
@@ -42,7 +42,7 @@ export default function ReviewForm({ productId }: { productId: string }) {
                         >
                             <button
                                 onClick={() => setIsOpen(false)}
-                                className="absolute top-6 right-6 p-2 rounded-full hover:bg-neutral-100 transition-colors text-neutral-400 hover:text-neutral-900"
+                                className="absolute top-6 right-6 p-2 rounded-full hover:bg-neutral-100 transition-colors text-neutral-400 hover:text-[#623903]"
                             >
                                 ✕
                             </button>
@@ -50,18 +50,18 @@ export default function ReviewForm({ productId }: { productId: string }) {
                             {!user ? (
                                 <div className="text-center py-8">
                                     <div className="w-16 h-16 bg-yellow-100 rounded-full flex items-center justify-center mx-auto mb-6 text-2xl">🔐</div>
-                                    <h4 className="text-2xl font-bold mb-3 text-neutral-900">Sign in required</h4>
+                                    <h4 className="text-2xl font-bold mb-3 text-[#623903]">Sign in required</h4>
                                     <p className="text-neutral-500 mb-8 max-w-xs mx-auto">Please log in to share your experience with the community.</p>
                                     <div className="flex flex-col gap-3">
                                         <Link
                                             href={`/login?redirect=/products/${productId}`}
-                                            className="w-full py-3.5 bg-neutral-900 text-white font-bold rounded-xl hover:bg-neutral-800 transition-colors"
+                                            className="w-full py-3.5 bg-[#623903] text-white font-bold rounded-xl hover:bg-[#7a4a05] transition-colors"
                                         >
                                             Log In
                                         </Link>
                                         <button
                                             onClick={() => setIsOpen(false)}
-                                            className="w-full py-3.5 text-neutral-500 font-medium hover:text-neutral-900 transition-colors"
+                                            className="w-full py-3.5 text-neutral-500 font-medium hover:text-[#623903] transition-colors"
                                         >
                                             Maybe later
                                         </button>
@@ -69,7 +69,7 @@ export default function ReviewForm({ productId }: { productId: string }) {
                                 </div>
                             ) : (
                                 <>
-                                    <h4 className="text-2xl font-bold mb-2 text-neutral-900">Share your thoughts</h4>
+                                    <h4 className="text-2xl font-bold mb-2 text-[#623903]">Share your thoughts</h4>
                                     <p className="text-neutral-500 mb-8">How was your experience with this product?</p>
 
                                     <form action={async (formData) => {
@@ -120,7 +120,7 @@ export default function ReviewForm({ productId }: { productId: string }) {
                                                     <label key={star} className="flex-1 cursor-pointer group relative py-2">
                                                         <input type="radio" name="rating" value={star} className="peer sr-only" required defaultChecked={star === 5} />
                                                         <div className="text-center text-2xl grayscale opacity-30 peer-checked:grayscale-0 peer-checked:opacity-100 peer-checked:scale-110 transition-all group-hover:grayscale-0 group-hover:opacity-70">⭐</div>
-                                                        <div className="text-[10px] font-bold text-center text-neutral-400 mt-1 uppercase peer-checked:text-neutral-900">{star === 5 ? 'Perfect' : star === 1 ? 'Bad' : star}</div>
+                                                        <div className="text-[10px] font-bold text-center text-neutral-400 mt-1 uppercase peer-checked:text-[#623903]">{star === 5 ? 'Perfect' : star === 1 ? 'Bad' : star}</div>
                                                     </label>
                                                 ))}
                                             </div>
@@ -132,7 +132,7 @@ export default function ReviewForm({ productId }: { productId: string }) {
                                                 name="comment"
                                                 required
                                                 rows={4}
-                                                className="w-full bg-neutral-50 border border-neutral-200 rounded-xl px-4 py-3 text-neutral-900 placeholder-neutral-400 focus:outline-none focus:ring-2 focus:ring-neutral-900 focus:bg-white transition-all resize-none"
+                                                className="w-full bg-neutral-50 border border-neutral-200 rounded-xl px-4 py-3 text-[#623903] placeholder-neutral-400 focus:outline-none focus:ring-2 focus:ring-[#623903] focus:bg-white transition-all resize-none"
                                                 placeholder="Tell us what you liked or didn't like..."
                                             ></textarea>
                                         </div>
@@ -141,7 +141,7 @@ export default function ReviewForm({ productId }: { productId: string }) {
                                             <button
                                                 type="submit"
                                                 disabled={submitting}
-                                                className="w-full py-4 bg-neutral-900 text-white font-bold rounded-xl hover:bg-neutral-800 transition-colors shadow-lg disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                                                className="w-full py-4 bg-[#623903] text-white font-bold rounded-xl hover:bg-[#7a4a05] transition-colors shadow-lg disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
                                             >
                                                 {submitting ? (
                                                     <><span>Publishing...</span></>

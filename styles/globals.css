@@ -20,7 +20,7 @@ nav a::after {
   bottom: 0;
   left: 0;
   height: 2px;
-  background-color: #000000;
+  background-color: #623903;
   /* Tailwind red-600 */
   width: 0%;
   transition: width 0.3s ease;
@@ -32,12 +32,12 @@ nav a:hover::after {
 
 :root {
 
-  --card: #000000;
+  --card: #623903;
   --muted: #9aa1ac;
   --card-outline: rgb(255, 255, 255);
   --card-outline-strong: rgb(255, 255, 255);
 
-  --primary: #000000;
+  --primary: #623903;
   --secondary: #fffbf0;
   --accent: #D4AF37;
   --accent-dark: #B5952F;
@@ -90,7 +90,7 @@ body {
 }
 
 .btn-primary {
-  background: rgb(0, 0, 0);
+  background: #623903;
   color: rgb(0, 0, 0);
 }
 
@@ -106,7 +106,7 @@ body {
 }
 
 a {
-  color: #000000;
+  color: #623903;
 }
 
 a:hover {

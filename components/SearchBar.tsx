@@ -20,13 +20,13 @@ export default function SearchBar({ className = "" }: { className?: string }) {
         value={q}
         onChange={(e) => setQ(e.target.value)}
         placeholder="Search T-shirts…"
-        className="w-full rounded-xl bg-neutral-900/70 border border-neutral-700 px-4 py-2 outline-none
+        className="w-full rounded-xl bg-[#623903]/70 border border-neutral-700 px-4 py-2 outline-none
                    focus:border-neutral-400"
         aria-label="Search products"
       />
       <button
         type="submit"
-        className="rounded-xl bg-white text-black font-semibold px-4 py-2
+        className="rounded-xl bg-white text-[#623903] font-semibold px-4 py-2
                    transition-transform duration-150 hover:scale-105 active:scale-95"
       >
         Search

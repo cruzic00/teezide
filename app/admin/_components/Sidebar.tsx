@@ -19,7 +19,7 @@ export default function Sidebar({ user }: { user: any }) {
     return (
         <div className="flex flex-col h-full">
             {/* Header */}
-            <div className="px-8 py-7 border-b border-neutral-800/80">
+            <div className="px-8 py-7 border-b border-[#7a4a05]/80">
                 <h1 className="text-2xl font-black tracking-tighter text-white">
                     TEE<span className="text-yellow-400">ZIDE</span>
                 </h1>
@@ -35,8 +35,8 @@ export default function Sidebar({ user }: { user: any }) {
                             key={link.href}
                             href={link.href}
                             className={`flex items-center gap-4 px-6 py-4 rounded-xl text-base font-medium transition-all ${isActive
-                                ? "bg-yellow-500 text-black shadow-lg shadow-yellow-500/20"
-                                : "text-neutral-400 hover:text-white hover:bg-neutral-800"
+                                ? "bg-yellow-500 text-[#623903] shadow-lg shadow-yellow-500/20"
+                                : "text-neutral-400 hover:text-white hover:bg-[#7a4a05]"
                                 }`}
                         >
                             <link.icon size={24} />
@@ -47,13 +47,13 @@ export default function Sidebar({ user }: { user: any }) {
             </div>
 
             {/* Footer / Logout */}
-            <div className="p-4 border-t border-neutral-800">
-                <div className="bg-neutral-800 rounded-xl p-4 flex items-center gap-3 mb-4">
+            <div className="p-4 border-t border-[#7a4a05]">
+                <div className="bg-[#7a4a05] rounded-xl p-4 flex items-center gap-3 mb-4">
                     <div className="w-10 h-10 rounded-full bg-neutral-700 overflow-hidden">
                         {user.profilePicture ? (
                             <img src={user.profilePicture} alt="Admin" className="w-full h-full object-cover" />
                         ) : (
-                            <div className="w-full h-full bg-yellow-500 flex items-center justify-center font-bold text-black">{user.username[0]}</div>
+                            <div className="w-full h-full bg-yellow-500 flex items-center justify-center font-bold text-[#623903]">{user.username[0]}</div>
                         )}
                     </div>
                     <div className="flex-1 overflow-hidden">
