@@ -18,7 +18,9 @@ const DEFAULT_LINKS = [
 ];
 
 export default function Navbar({ links }: { links?: { name: string; href: string }[] }) {
-  const navLinks = links && links.length ? links : DEFAULT_LINKS;
+  const navLinks = (links && links.length ? links : DEFAULT_LINKS).filter(
+    (l) => l.href && l.href.trim()
+  );
   const { user, loading } = useAuth();
   const { items } = useCart();
   const pathname = usePathname();

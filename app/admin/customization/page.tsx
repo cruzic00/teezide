@@ -10,17 +10,6 @@ type Block = SectionBlock | BannerBlock;
 type NavItem = { name: string; href: string };
 type Settings = { heroSlides: Media[]; marquee: string[]; nav: NavItem[]; blocks: Block[] };
 
-const LINK_TARGETS = [
-  { label: "Home", href: "/" },
-  { label: "All Products", href: "/products" },
-  { label: "Anime", href: "/anime" },
-  { label: "Gym", href: "/gym" },
-  { label: "College", href: "/college" },
-  { label: "Mafia", href: "/mafia" },
-  { label: "Office", href: "/office" },
-  { label: "Cart", href: "/cart" },
-];
-
 const SOURCES = [
   { value: "trending", label: "Trending (⭐ marked products)" },
   { value: "tshirt", label: "T-Shirts" },
@@ -49,9 +38,23 @@ export default function CustomizationPage() {
   const [msg, setMsg] = useState<string | null>(null);
   const [dragIndex, setDragIndex] = useState<number | null>(null);
 
+  const [cats, setCats] = useState<{ name: string }[]>([]);
+
   useEffect(() => {
     fetch("/api/admin/settings").then((r) => r.json()).then(setSettings);
+    fetch("/api/admin/categories")
+      .then((r) => r.json())
+      .then((d) => setCats(d.categories || []))
+      .catch(() => { });
   }, []);
+
+  const linkTargets = [
+    { label: "— Hidden (don't show) —", href: "" },
+    { label: "Home", href: "/" },
+    { label: "All Products", href: "/products" },
+    { label: "Cart", href: "/cart" },
+    ...cats.map((c) => ({ label: c.name, href: `/c/${c.name.toLowerCase()}` })),
+  ];
 
   function patchHeroSlide(i: number, patch: Partial<Media>) {
     setSettings((s) => {
@@ -205,10 +208,10 @@ export default function CustomizationPage() {
             <div key={i} className="flex gap-2">
               <input value={item.name} onChange={(e) => updateNav(i, { name: e.target.value })} placeholder="Menu name (e.g. ANIME)" className="flex-1 px-3 py-2 border border-neutral-200 rounded-lg focus:ring-2 focus:ring-neutral-900 outline-none" />
               <select value={item.href} onChange={(e) => updateNav(i, { href: e.target.value })} className="flex-1 px-3 py-2 border border-neutral-200 rounded-lg focus:ring-2 focus:ring-neutral-900 outline-none bg-white">
-                {!LINK_TARGETS.some((t) => t.href === item.href) && item.href && (
+                {!linkTargets.some((t) => t.href === item.href) && item.href && (
                   <option value={item.href}>{item.href}</option>
                 )}
-                {LINK_TARGETS.map((t) => (
+                {linkTargets.map((t) => (
                   <option key={t.href} value={t.href}>{t.label}</option>
                 ))}
               </select>
