@@ -85,9 +85,9 @@ export default function Banner({ slides }: { slides: Slide[] }) {
                 alt={slide.alt || ""}
                 fill
                 sizes="100vw"
-                quality={90}
-                className={`object-cover transition-transform duration-[20s] ease-linear ${i === index ? "scale-110" : "scale-100"
-                  }`}
+                quality={100}
+                unoptimized
+                className="object-cover"
                 priority={i === 0}
               />
             </div>
