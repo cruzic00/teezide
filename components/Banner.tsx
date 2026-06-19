@@ -32,8 +32,6 @@ export default function Banner({ slides }: { slides: Slide[] }) {
     return /\.(mp4|webm|ogg)$/i.test(s?.src || "");
   }, [s]);
 
-  const duration = s?.durationMs ?? 11000;
-
   // Keyboard left/right
   useEffect(() => {
     const handleKey = (e: KeyboardEvent) => {
@@ -44,45 +42,23 @@ export default function Banner({ slides }: { slides: Slide[] }) {
     return () => window.removeEventListener("keydown", handleKey);
   }, []);
 
-  // Autoslide: image => 11s; video => play + cap at 11s (or advance on ended)
+  // Autoslide: images advance after 5s; videos play fully then advance on end.
   useEffect(() => {
-    let timer: ReturnType<typeof setTimeout> | undefined;
     const v = videoRef.current;
 
     if (isVideo && v) {
-      // Prepare & play
       try {
         v.currentTime = 0;
-        // iOS requires muted + playsInline to auto play
         v.play().catch(() => { });
       } catch { }
-
-      // Cap video at duration (e.g., 11s)
-      timer = setTimeout(() => {
-        try { v.pause(); } catch { }
-        go(1);
-      }, duration);
-
-      // If video ends earlier, advance
-      const onEnded = () => {
-        if (timer) clearTimeout(timer);
-        go(1);
-      };
+      const onEnded = () => go(1);
       v.addEventListener("ended", onEnded);
-
-      return () => {
-        if (timer) clearTimeout(timer);
-        v.removeEventListener("ended", onEnded);
-        try { v.pause(); } catch { }
-      };
-    } else {
-      // Image: simple timer
-      timer = setTimeout(() => go(1), duration);
-      return () => {
-        if (timer) clearTimeout(timer);
-      };
+      return () => v.removeEventListener("ended", onEnded);
     }
-  }, [index, isVideo, duration]);
+
+    const timer = setTimeout(() => go(1), 5000);
+    return () => clearTimeout(timer);
+  }, [index, isVideo]);
 
   return (
     <div className="relative left-1/2 right-1/2 -ml-[50vw] -mr-[50vw] -mt-8 w-screen h-[80vh] bg-neutral-900 group overflow-hidden">
@@ -95,11 +71,11 @@ export default function Banner({ slides }: { slides: Slide[] }) {
         >
           {slide.type === "video" || (slide.src.match(/\.(mp4|webm)$/i)) ? (
             <video
+              ref={i === index ? videoRef : undefined}
               src={slide.src}
               className="w-full h-full object-cover"
               autoPlay
               muted
-              loop
               playsInline
             />
           ) : (
@@ -108,6 +84,8 @@ export default function Banner({ slides }: { slides: Slide[] }) {
                 src={slide.src}
                 alt={slide.alt || ""}
                 fill
+                sizes="100vw"
+                quality={90}
                 className={`object-cover transition-transform duration-[20s] ease-linear ${i === index ? "scale-110" : "scale-100"
                   }`}
                 priority={i === 0}
