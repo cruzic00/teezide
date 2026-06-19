@@ -1,7 +1,7 @@
 // app/page.tsx — server component. Content is driven by /admin/customization.
 import Link from "next/link";
 import Banner from "../components/Banner";
-import ProductCard from "../components/ProductCard";
+import ProductSlider from "../components/ProductSlider";
 import { getProducts } from "../lib/products-db";
 import { getHomeSettings, type SectionBlock, type BannerBlock } from "../lib/settings";
 
@@ -23,13 +23,7 @@ function ProductSection({ block, products }: { block: SectionBlock; products: an
             <p className="text-gray-500 font-medium tracking-wide uppercase text-sm">{block.subtitle}</p>
           )}
         </div>
-        <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-x-4 gap-y-8">
-          {products.length === 0 ? (
-            <p className="col-span-full text-center text-neutral-400">No products yet.</p>
-          ) : (
-            products.map((p) => <ProductCard key={p.id} product={p as any} />)
-          )}
-        </div>
+        <ProductSlider products={products} />
       </div>
     </section>
   );
