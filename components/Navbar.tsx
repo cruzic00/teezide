@@ -59,7 +59,7 @@ export default function Navbar({ links }: { links?: { name: string; href: string
         {/* LEFT: LOGO */}
         <div className="flex-shrink-0">
           <Link href="/" className="group flex items-center gap-2">
-            <img src="/media/loggo.jpeg" alt="Teezide" className="h-10 w-auto object-contain transition-transform group-hover:scale-105" />
+            <img src="/media/loggo.jpeg" alt="Teezide" className="h-10 w-auto object-contain mix-blend-multiply transition-transform group-hover:scale-105" />
           </Link>
         </div>
 
