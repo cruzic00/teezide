@@ -48,6 +48,17 @@ export const DEFAULT_MARQUEE = [
   "Free Shipping on Orders Over ₹999",
 ];
 
+export type Category = { name: string; subCategories: string[] };
+
+export const DEFAULT_CATEGORIES: Category[] = [
+  { name: "Anime", subCategories: ["T-Shirts", "Hoodies"] },
+  { name: "Gym", subCategories: ["T-Shirts", "Tanks"] },
+  { name: "College", subCategories: ["T-Shirts", "Hoodies"] },
+  { name: "Mafia", subCategories: ["T-Shirts"] },
+  { name: "Office", subCategories: ["Shirts", "T-Shirts"] },
+  { name: "Tshirt", subCategories: ["Oversized", "Regular"] },
+];
+
 export const DEFAULT_BLOCKS: Block[] = [
   { id: "trending", kind: "section", title: "Trending Now", subtitle: "Curated top picks for you", source: "trending" },
   { id: "vibe", kind: "banner", mediaType: "video", mediaUrl: "/media/hero.mp4", title: "Wear The Vibe", subtitle: "Premium drops · Limited stock" },

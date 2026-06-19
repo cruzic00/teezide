@@ -2,6 +2,9 @@
 
 import { useState, useEffect } from "react";
 import { Plus, Search, Edit, Trash2, X, Save, RefreshCw, Loader2 } from "lucide-react";
+import CategoryManager from "./CategoryManager";
+
+type Cat = { name: string; subCategories: string[] };
 
 type Product = {
     _id?: string;
@@ -69,6 +72,8 @@ export default function StocksPage() {
     const [loading, setLoading] = useState(true);
     const [searchTerm, setSearchTerm] = useState("");
     const [categoryFilter, setCategoryFilter] = useState("");
+    const [view, setView] = useState<"products" | "categories">("products");
+    const [cats, setCats] = useState<Cat[]>([]);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [editingId, setEditingId] = useState<string | null>(null);
     const [formData, setFormData] = useState<Product>(EMPTY_PRODUCT);
@@ -99,7 +104,13 @@ export default function StocksPage() {
 
     useEffect(() => {
         fetchProducts();
+        fetch("/api/admin/categories")
+            .then((r) => r.json())
+            .then((d) => setCats(d.categories || []))
+            .catch(() => { });
     }, []);
+
+    const subOptions = cats.find((c) => c.name.toLowerCase() === (formData.category || "").toLowerCase())?.subCategories || [];
 
     async function fetchProducts() {
         setLoading(true);
@@ -297,6 +308,16 @@ export default function StocksPage() {
                 </div>
             </div>
 
+            {/* VIEW TOGGLE */}
+            <div className="inline-flex bg-white border border-gray-200 rounded-xl p-1 mb-6">
+                <button onClick={() => setView("products")} className={`px-5 py-2 rounded-lg text-sm font-bold transition ${view === "products" ? "bg-neutral-900 text-white" : "text-gray-600 hover:text-gray-900"}`}>Products</button>
+                <button onClick={() => setView("categories")} className={`px-5 py-2 rounded-lg text-sm font-bold transition ${view === "categories" ? "bg-neutral-900 text-white" : "text-gray-600 hover:text-gray-900"}`}>Categories</button>
+            </div>
+
+            {view === "categories" && <CategoryManager />}
+
+            {view === "products" && (
+              <>
             {/* FILTERS */}
             <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 mb-8 flex flex-wrap gap-6 items-center">
                 <div className="relative flex-1 min-w-[320px]">
@@ -383,6 +404,8 @@ export default function StocksPage() {
                     {/* Pagination could go here */}
                 </div>
             </div>
+              </>
+            )}
 
             {/* MODAL */}
             {isModalOpen && (
@@ -406,26 +429,20 @@ export default function StocksPage() {
 
                                     <div>
                                         <label className="block text-sm font-medium text-gray-700 mb-1">Category</label>
-                                        <select name="category" value={formData.category} onChange={handleInputChange} className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-neutral-900 outline-none">
+                                        <select name="category" value={formData.category} onChange={handleInputChange} className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-neutral-900 outline-none capitalize">
                                             <option value="">Select Category</option>
-                                            <option value="Anime">Anime</option>
-                                            <option value="Gym">Gym</option>
-                                            <option value="College">College</option>
-                                            <option value="Mafia">Mafia</option>
-                                            <option value="Men">Men</option>
-                                            <option value="Women">Women</option>
-                                            <option value="Kids">Kids</option>
+                                            {cats.map((c) => (
+                                                <option key={c.name} value={c.name} className="capitalize">{c.name}</option>
+                                            ))}
                                         </select>
                                     </div>
                                     <div>
                                         <label className="block text-sm font-medium text-gray-700 mb-1">Sub Category</label>
-                                        <select name="subCategory" value={formData.subCategory} onChange={handleInputChange} className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-neutral-900 outline-none">
-                                            <option value="">Select Sub Category</option>
-                                            <option value="T-Shirts">T-Shirts</option>
-                                            <option value="Hoodies">Hoodies</option>
-                                            <option value="Jeans">Jeans</option>
-                                            <option value="Shoes">Shoes</option>
-                                            <option value="Masalas">Masalas</option>
+                                        <select name="subCategory" value={formData.subCategory} onChange={handleInputChange} className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-neutral-900 outline-none" disabled={!formData.category}>
+                                            <option value="">{formData.category ? "Select Sub Category" : "Pick a category first"}</option>
+                                            {subOptions.map((s) => (
+                                                <option key={s} value={s}>{s}</option>
+                                            ))}
                                         </select>
                                     </div>
                                     <div>

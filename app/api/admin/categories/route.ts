@@ -1,20 +1,18 @@
 import { NextResponse } from "next/server";
 import { requireAdmin } from "../../../../lib/admin-utils";
 import { createAdminClient } from "../../../../lib/supabase/admin";
-import { normalizeSettings } from "../../../../lib/settings";
+import { DEFAULT_CATEGORIES } from "../../../../lib/settings";
 
 export async function GET() {
   const auth = await requireAdmin();
   if (!auth.ok) return NextResponse.json({ error: auth.message }, { status: auth.code });
 
   const admin = createAdminClient();
-  const { data } = await admin
-    .from("site_settings")
-    .select("data")
-    .eq("id", 1)
-    .single();
-
-  return NextResponse.json(normalizeSettings(data?.data ?? {}));
+  const { data } = await admin.from("site_settings").select("data").eq("id", 1).single();
+  const cats = (data?.data as any)?.categories;
+  return NextResponse.json({
+    categories: Array.isArray(cats) && cats.length ? cats : DEFAULT_CATEGORIES,
+  });
 }
 
 export async function PUT(req: Request) {
@@ -22,15 +20,14 @@ export async function PUT(req: Request) {
   if (!auth.ok) return NextResponse.json({ error: auth.message }, { status: auth.code });
 
   try {
-    const body = await req.json();
+    const { categories } = await req.json();
     const admin = createAdminClient();
-    // Merge with existing data so other keys (e.g. categories) aren't wiped.
     const { data: existing } = await admin
       .from("site_settings")
       .select("data")
       .eq("id", 1)
       .single();
-    const merged = { ...(existing?.data ?? {}), ...body };
+    const merged = { ...(existing?.data ?? {}), categories: categories ?? [] };
     const { error } = await admin
       .from("site_settings")
       .upsert({ id: 1, data: merged, updated_at: new Date().toISOString() });
