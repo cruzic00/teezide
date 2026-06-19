@@ -53,7 +53,10 @@ export default function CustomizationPage() {
     { label: "Home", href: "/" },
     { label: "All Products", href: "/products" },
     { label: "Cart", href: "/cart" },
-    ...cats.map((c) => ({ label: c.name, href: `/c/${c.name.toLowerCase()}` })),
+    ...cats.slice(0, 6).map((c, idx) => ({
+      label: `Option ${idx + 1} (${c.name})`,
+      href: `/c/${c.name.toLowerCase()}`,
+    })),
   ];
 
   function patchHeroSlide(i: number, patch: Partial<Media>) {
