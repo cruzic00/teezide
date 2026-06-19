@@ -10,6 +10,17 @@ type Block = SectionBlock | BannerBlock;
 type NavItem = { name: string; href: string };
 type Settings = { heroSlides: Media[]; marquee: string[]; nav: NavItem[]; blocks: Block[] };
 
+const LINK_TARGETS = [
+  { label: "Home", href: "/" },
+  { label: "All Products", href: "/products" },
+  { label: "Anime", href: "/anime" },
+  { label: "Gym", href: "/gym" },
+  { label: "College", href: "/college" },
+  { label: "Mafia", href: "/mafia" },
+  { label: "Office", href: "/office" },
+  { label: "Cart", href: "/cart" },
+];
+
 const SOURCES = [
   { value: "trending", label: "Trending (⭐ marked products)" },
   { value: "tshirt", label: "T-Shirts" },
@@ -183,7 +194,7 @@ export default function CustomizationPage() {
         <div className="flex items-center justify-between mb-4">
           <div>
             <h2 className="text-lg font-bold text-neutral-900">Navigation Menu</h2>
-            <p className="text-xs text-neutral-400 mt-0.5">Top navbar links. Href is the page path (e.g. /anime).</p>
+            <p className="text-xs text-neutral-400 mt-0.5">Type a name, then pick which page it opens.</p>
           </div>
           <button onClick={addNav} className="flex items-center gap-1 text-sm font-bold text-neutral-900 px-3 py-1.5 rounded-lg border border-neutral-200 hover:bg-neutral-50">
             <Plus size={15} /> Add Link
@@ -192,8 +203,15 @@ export default function CustomizationPage() {
         <div className="space-y-2">
           {settings.nav.map((item, i) => (
             <div key={i} className="flex gap-2">
-              <input value={item.name} onChange={(e) => updateNav(i, { name: e.target.value })} placeholder="Label (e.g. ANIME)" className="flex-1 px-3 py-2 border border-neutral-200 rounded-lg focus:ring-2 focus:ring-neutral-900 outline-none" />
-              <input value={item.href} onChange={(e) => updateNav(i, { href: e.target.value })} placeholder="/path" className="flex-1 px-3 py-2 border border-neutral-200 rounded-lg focus:ring-2 focus:ring-neutral-900 outline-none font-mono text-sm" />
+              <input value={item.name} onChange={(e) => updateNav(i, { name: e.target.value })} placeholder="Menu name (e.g. ANIME)" className="flex-1 px-3 py-2 border border-neutral-200 rounded-lg focus:ring-2 focus:ring-neutral-900 outline-none" />
+              <select value={item.href} onChange={(e) => updateNav(i, { href: e.target.value })} className="flex-1 px-3 py-2 border border-neutral-200 rounded-lg focus:ring-2 focus:ring-neutral-900 outline-none bg-white">
+                {!LINK_TARGETS.some((t) => t.href === item.href) && item.href && (
+                  <option value={item.href}>{item.href}</option>
+                )}
+                {LINK_TARGETS.map((t) => (
+                  <option key={t.href} value={t.href}>{t.label}</option>
+                ))}
+              </select>
               <button onClick={() => removeNav(i)} className="text-red-500 hover:bg-red-50 px-3 rounded-lg"><Trash2 size={16} /></button>
             </div>
           ))}
