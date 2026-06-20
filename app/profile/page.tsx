@@ -22,9 +22,9 @@ export default async function AccountPage() {
 
   const cards = [
     { href: "/orders", icon: Package, title: "Your Orders", desc: "Track, return, or buy things again" },
-    { href: "/profile/edit", icon: UserCog, title: "Login & Profile", desc: "Edit your name, phone & avatar" },
+    { href: "/profile/edit", icon: UserCog, title: "Login & Profile", desc: "Edit your name & phone" },
     { href: "/cart", icon: ShoppingBag, title: "Your Cart", desc: "Items ready for checkout" },
-    { href: "/profile/edit", icon: MapPin, title: "Addresses", desc: "Manage your delivery details" },
+    { href: "/profile/addresses", icon: MapPin, title: "Addresses", desc: "Manage your delivery details" },
     { href: "mailto:mynonlineshop@gmail.com", icon: HelpCircle, title: "Support", desc: "Get help with your orders" },
     ...(isAdmin ? [{ href: "/admin", icon: LayoutDashboard, title: "Admin Panel", desc: "Manage products & orders" }] : []),
   ];

@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import { ChevronLeft } from "lucide-react";
 
 type OrderItem = {
   name: string;
@@ -56,7 +57,10 @@ export default function OrdersPage() {
 
   return (
     <div className="max-w-5xl mx-auto p-6">
-      <h1 className="text-2xl font-bold mb-6">My Orders</h1>
+      <Link href="/profile" className="inline-flex items-center gap-1 text-sm font-medium text-neutral-500 hover:text-[#623903] mb-6">
+        <ChevronLeft size={16} /> Back to account
+      </Link>
+      <h1 className="text-2xl font-bold text-[#623903] mb-6">My Orders</h1>
 
       <div className="space-y-6">
         {orders.map((order) => (

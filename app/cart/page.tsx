@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { ShoppingBag, Minus, Plus, Trash2 } from "lucide-react";
+import { ShoppingBag, Minus, Plus, Trash2, ChevronLeft } from "lucide-react";
 import { useCart } from "../../lib/cart";
 import CheckoutButton from "../../components/CheckoutButton";
 import RecentlyViewed from "../../components/RecentlyViewed";
@@ -16,6 +16,9 @@ export default function CartPage() {
 
   return (
     <div className="max-w-6xl mx-auto py-8">
+      <Link href="/profile" className="inline-flex items-center gap-1 text-sm font-medium text-neutral-500 hover:text-[#623903] mb-6">
+        <ChevronLeft size={16} /> Back to account
+      </Link>
       <h1 className="text-3xl font-bold text-[#623903] mb-8">Your Cart</h1>
 
       {!hasItems && (

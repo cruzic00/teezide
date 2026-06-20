@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { User, Phone, Link as LinkIcon, Camera, Save, Loader2 } from "lucide-react";
+import { User, Phone, Camera, Save, Loader2 } from "lucide-react";
 
 type UserData = {
   email: string;
@@ -107,11 +107,6 @@ export default function ProfileForm({ initialUser }: { initialUser: UserData }) 
                 <input type="tel" name="phone" value={formData.phone} onChange={handleChange} placeholder="+91 90000 00000" className="input" />
               </Field>
             </div>
-
-            <Field label="Avatar URL" icon={<LinkIcon size={18} />}>
-              <input type="url" name="profilePicture" value={formData.profilePicture} onChange={handleChange} placeholder="https://…" className="input" />
-            </Field>
-            <p className="text-xs text-neutral-400 -mt-3 ml-1">Paste a direct link to an image (JPG, PNG, GIF).</p>
 
             <div className="pt-4 flex justify-end border-t border-neutral-100">
               <button type="submit" disabled={loading} className="px-8 py-3 bg-[#623903] text-white font-bold rounded-xl hover:bg-[#7a4a05] disabled:opacity-50 transition flex items-center gap-2 mt-4">
