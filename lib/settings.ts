@@ -1,7 +1,8 @@
 // lib/settings.ts
 // Home-page CMS settings (editable from /admin/customization).
 // Home content = a top hero + an ordered list of blocks (sections or banners).
-import { createClient } from "./supabase/server";
+import { unstable_cache } from "next/cache";
+import { createPublicClient } from "./supabase/public";
 
 export type Media = {
   mediaType: "image" | "video";
@@ -116,16 +117,20 @@ export function normalizeSettings(d: any): HomeSettings {
   };
 }
 
-export async function getHomeSettings(): Promise<HomeSettings> {
-  try {
-    const supabase = await createClient();
-    const { data } = await supabase
-      .from("site_settings")
-      .select("data")
-      .eq("id", 1)
-      .single();
-    return normalizeSettings(data?.data ?? {});
-  } catch {
-    return DEFAULT_SETTINGS;
-  }
-}
+export const getHomeSettings = unstable_cache(
+  async (): Promise<HomeSettings> => {
+    try {
+      const supabase = createPublicClient();
+      const { data } = await supabase
+        .from("site_settings")
+        .select("data")
+        .eq("id", 1)
+        .single();
+      return normalizeSettings(data?.data ?? {});
+    } catch {
+      return DEFAULT_SETTINGS;
+    }
+  },
+  ["home-settings"],
+  { revalidate: 60, tags: ["settings"] }
+);

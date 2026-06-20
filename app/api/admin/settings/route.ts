@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { revalidateTag } from "next/cache";
 import { requireAdmin } from "../../../../lib/admin-utils";
 import { createAdminClient } from "../../../../lib/supabase/admin";
 import { normalizeSettings } from "../../../../lib/settings";
@@ -36,6 +37,7 @@ export async function PUT(req: Request) {
       .upsert({ id: 1, data: merged, updated_at: new Date().toISOString() });
 
     if (error) return NextResponse.json({ error: error.message }, { status: 500 });
+    revalidateTag("settings");
     return NextResponse.json({ success: true });
   } catch (err: any) {
     return NextResponse.json({ error: err.message || "Server error" }, { status: 500 });
