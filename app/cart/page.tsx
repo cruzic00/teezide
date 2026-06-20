@@ -126,7 +126,7 @@ export default function CartPage() {
 
             <CheckoutButton className="w-full flex items-center justify-center gap-2 px-6 py-3.5 bg-[#623903] text-white font-bold rounded-xl hover:bg-[#7a4a05] transition" />
 
-            <p className="text-center text-xs text-neutral-400">Cash on Delivery available</p>
+            <p className="text-center text-xs text-neutral-400"></p>
           </aside>
         </div>
       )}
