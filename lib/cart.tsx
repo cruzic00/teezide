@@ -8,6 +8,7 @@ type CartItem = {
   id: string;
   name: string;
   price: number;
+  mrp?: number; // original rate (paisa) for savings display
   image: string;
   size: string;
   qty: number;

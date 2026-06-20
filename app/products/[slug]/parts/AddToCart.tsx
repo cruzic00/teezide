@@ -32,9 +32,9 @@ export default function AddToCart({ product }: { product: Product }) {
       id: product.id,
       name: product.name,
       price: product.price,
+      mrp: product.mrp,
       image: product.image,
       size,
-
     });
 
     showToast("T-shirt added to cart");

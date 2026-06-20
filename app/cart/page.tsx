@@ -9,6 +9,10 @@ import RecentlyViewed from "../../components/RecentlyViewed";
 export default function CartPage() {
   const { items, total, removeItem, updateQty, clear } = useCart();
   const hasItems = items.length > 0;
+  const saved = items.reduce(
+    (s, it) => s + (it.mrp && it.mrp > it.price ? (it.mrp - it.price) * it.qty : 0),
+    0
+  );
 
   return (
     <div className="max-w-6xl mx-auto py-8">
@@ -108,6 +112,12 @@ export default function CartPage() {
               <span>Shipping</span>
               <span className="font-semibold text-green-600">Free</span>
             </div>
+            {saved > 0 && (
+              <div className="flex justify-between text-sm text-neutral-600">
+                <span>You Saved</span>
+                <span className="font-semibold text-green-600">−₹{(saved / 100).toFixed(2)}</span>
+              </div>
+            )}
 
             <div className="border-t border-neutral-200 pt-4 flex justify-between items-baseline">
               <span className="font-bold text-[#623903]">Total</span>
