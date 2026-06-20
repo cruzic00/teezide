@@ -1,7 +1,7 @@
 import { notFound } from "next/navigation";
 import AddToCart from "./parts/AddToCart";
 import ProductGallery from "../../../components/ProductGallery";
-import ProductCard from "../../../components/ProductCard";
+import ProductSlider from "../../../components/ProductSlider";
 import { getProductBySlug } from "../../../lib/products-db";
 import Link from "next/link";
 import ReviewForm from "./parts/ReviewForm";
@@ -177,16 +177,11 @@ export default async function ProductDetail({ params }: Props) {
       {
         product.relatedProducts && product.relatedProducts.length > 0 && (
           <section className="py-12 border-t border-neutral-100">
-            <div className="flex items-center justify-between mb-10">
+            <div className="mb-10">
               <h3 className="text-2xl md:text-3xl font-black text-[#623903] uppercase tracking-tight">You Might Also Like</h3>
-              <Link href="/products" className="hidden md:block text-sm font-bold text-neutral-500 hover:text-[#623903] transition-colors uppercase tracking-widest border-b border-transparent hover:border-[#623903] pb-0.5">View All</Link>
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-x-6 gap-y-10">
-              {product.relatedProducts.map((p: any) => (
-                <ProductCard key={p._id} product={p} />
-              ))}
-            </div>
+            <ProductSlider products={product.relatedProducts} />
           </section>
         )
       }
