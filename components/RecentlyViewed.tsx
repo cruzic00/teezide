@@ -8,7 +8,7 @@ import { RECENT_KEY, type ViewedItem } from "./TrackView";
 // Renders nothing if there are none.
 export default function RecentlyViewed({
   excludeSlug,
-  title = "You Watched",
+  title = "Recently Viewed",
 }: {
   excludeSlug?: string;
   title?: string;
