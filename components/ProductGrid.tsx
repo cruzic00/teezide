@@ -20,7 +20,7 @@ export default async function ProductGrid({
 
   return (
     <section className="relative left-1/2 right-1/2 -ml-[50vw] -mr-[50vw] w-screen">
-      <div className="max-w-[1600px] mx-auto px-5 lg:px-10 py-10 grid gap-6">
+      <div className="max-w-[1600px] mx-auto px-5 lg:px-10 pt-3 pb-10 grid gap-6">
         <div className="text-center max-w-3xl mx-auto">
           <h2 className="text-3xl md:text-4xl font-black uppercase tracking-tight text-[#623903]">
             {title}
