@@ -2,6 +2,7 @@
 // Server-side product reads from Supabase. Maps DB rows (snake_case) into the
 // shape the UI components already expect (with legacy aliases like `imageUrl`,
 // `title`, `_id` so existing components keep working).
+import { unstable_cache } from "next/cache";
 import { createPublicClient } from "./supabase/public";
 
 const PLACEHOLDER = "/placeholder.png";
@@ -46,31 +47,40 @@ export function mapProduct(d: any) {
   };
 }
 
-export async function getProducts(opts: { category?: string } = {}) {
-  try {
-    const supabase = createPublicClient();
-    let query = supabase
-      .from("products")
-      .select("*")
-      .order("created_at", { ascending: false });
+const fetchProducts = unstable_cache(
+  async (category?: string) => {
+    try {
+      const supabase = createPublicClient();
+      let query = supabase
+        .from("products")
+        .select("*")
+        .order("created_at", { ascending: false });
 
-    if (opts.category) {
-      query = query.ilike("category", opts.category);
-    }
+      if (category) {
+        query = query.ilike("category", category);
+      }
 
-    const { data, error } = await query;
-    if (error) {
-      console.error("getProducts error:", error.message);
+      const { data, error } = await query;
+      if (error) {
+        console.error("getProducts error:", error.message);
+        return [];
+      }
+      return (data ?? []).map(mapProduct);
+    } catch (e) {
+      console.error("getProducts failed:", e);
       return [];
     }
-    return (data ?? []).map(mapProduct);
-  } catch (e) {
-    console.error("getProducts failed:", e);
-    return [];
-  }
+  },
+  ["products-list"],
+  { revalidate: 120, tags: ["products"] }
+);
+
+export async function getProducts(opts: { category?: string } = {}) {
+  return fetchProducts(opts.category);
 }
 
-export async function getProductBySlug(slug: string) {
+export const getProductBySlug = unstable_cache(
+  async (slug: string) => {
   try {
     const supabase = createPublicClient();
     const { data } = await supabase
@@ -123,4 +133,7 @@ export async function getProductBySlug(slug: string) {
     console.error("getProductBySlug failed:", e);
     return null;
   }
-}
+  },
+  ["product-by-slug"],
+  { revalidate: 120, tags: ["products"] }
+);

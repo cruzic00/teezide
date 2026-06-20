@@ -555,15 +555,11 @@ export default function StocksPage() {
                                                                 {review.image && <img src={review.image} alt="Review" className="w-8 h-8 rounded object-cover border" />}
                                                                 <label className="cursor-pointer bg-white border border-gray-200 hover:bg-gray-50 text-gray-600 px-3 py-2 rounded-lg text-xs font-medium transition">
                                                                     Upload Img
-                                                                    <input type="file" className="hidden" accept="image/*" onChange={(e) => {
+                                                                    <input type="file" className="hidden" accept="image/*" onChange={async (e) => {
                                                                         const file = e.target.files?.[0];
-                                                                        if (file) {
-                                                                            const reader = new FileReader();
-                                                                            reader.onloadend = () => {
-                                                                                handleReviewChange(index, "image", reader.result as string);
-                                                                            };
-                                                                            reader.readAsDataURL(file);
-                                                                        }
+                                                                        if (!file) return;
+                                                                        const url = await uploadToStorage(file);
+                                                                        if (url) handleReviewChange(index, "image", url);
                                                                     }} />
                                                                 </label>
                                                             </div>
