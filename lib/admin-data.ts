@@ -1,18 +1,28 @@
 // lib/admin-data.ts
 // Server-only helpers for admin pages. Use the service-role client (bypasses RLS).
 // These are safe because /admin/* is guarded by middleware (admin role required).
+import { unstable_cache } from "next/cache";
 import { createAdminClient } from "./supabase/admin";
 
+// Cached because auth.admin.listUsers is a slow network call and emails
+// rarely change. Returns entries (Maps don't serialize through the cache).
+const fetchUserEmailEntries = unstable_cache(
+  async (): Promise<[string, string][]> => {
+    const admin = createAdminClient();
+    try {
+      const { data } = await admin.auth.admin.listUsers({ page: 1, perPage: 1000 });
+      return (data?.users ?? []).map((u) => [u.id, u.email ?? ""] as [string, string]);
+    } catch (e) {
+      console.error("listUserEmails error", e);
+      return [];
+    }
+  },
+  ["admin-user-emails"],
+  { revalidate: 300, tags: ["users"] }
+);
+
 export async function listUserEmails(): Promise<Map<string, string>> {
-  const admin = createAdminClient();
-  const map = new Map<string, string>();
-  try {
-    const { data } = await admin.auth.admin.listUsers({ page: 1, perPage: 1000 });
-    data?.users.forEach((u) => map.set(u.id, u.email ?? ""));
-  } catch (e) {
-    console.error("listUserEmails error", e);
-  }
-  return map;
+  return new Map(await fetchUserEmailEntries());
 }
 
 export async function getAllOrders() {

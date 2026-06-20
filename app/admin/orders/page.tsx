@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { getAllOrders } from "../../../lib/admin-data";
 import { PageHeader, Card, Badge, Th, EmptyState } from "../_components/AdminUI";
+import DeleteOrderButton from "./DeleteOrderButton";
 
 export default async function AdminOrdersPage() {
   const orders = await getAllOrders();
@@ -22,6 +23,7 @@ export default async function AdminOrdersPage() {
                 <Th>Total</Th>
                 <Th>Status</Th>
                 <Th>Date</Th>
+                <Th>Actions</Th>
               </tr>
             </thead>
             <tbody className="divide-y divide-neutral-100">
@@ -55,6 +57,9 @@ export default async function AdminOrdersPage() {
                     </td>
                     <td className="px-6 py-4 text-neutral-500">
                       {new Date(o.created_at).toLocaleDateString()}
+                    </td>
+                    <td className="px-6 py-4">
+                      <DeleteOrderButton id={o.id} />
                     </td>
                   </tr>
                 );
