@@ -29,7 +29,7 @@ export default function ProductCard({ product }: { product: CardProduct }) {
   return (
     <Link
       href={href}
-      className="group flex flex-col overflow-hidden bg-white rounded-2xl border border-neutral-100 transition-all duration-300 hover:shadow-2xl hover:-translate-y-1"
+      className="group flex flex-col overflow-hidden bg-white rounded-2xl border border-neutral-100 transition-all duration-300 hover:shadow-xl hover:-translate-y-1"
     >
       {/* Image */}
       <div className="relative aspect-[4/5] overflow-hidden bg-gray-100">
