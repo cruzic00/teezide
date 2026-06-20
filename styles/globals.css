@@ -144,6 +144,27 @@ a:hover {
   animation: marquee 20s linear infinite;
 }
 
+/* Print: show only #print-area (used by admin order print) */
+@media print {
+  body * {
+    visibility: hidden;
+  }
+  #print-area,
+  #print-area * {
+    visibility: visible;
+  }
+  #print-area {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    padding: 24px;
+  }
+  .no-print {
+    display: none !important;
+  }
+}
+
 /* Hide scrollbars (used by the product gallery thumbnails) */
 .scrollbar-hide {
   -ms-overflow-style: none;

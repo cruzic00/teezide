@@ -5,6 +5,7 @@ import { createAdminClient } from "../../../../lib/supabase/admin";
 import { listUserEmails } from "../../../../lib/admin-data";
 import { Card } from "../../_components/AdminUI";
 import OrderManager from "./OrderManager";
+import PrintButton from "./PrintButton";
 
 export default async function AdminOrderDetail({
   params,
@@ -24,10 +25,14 @@ export default async function AdminOrderDetail({
 
   return (
     <div className="p-8 md:p-10 max-w-4xl">
-      <Link href="/admin/orders" className="inline-flex items-center gap-1 text-sm font-medium text-neutral-500 hover:text-[#623903] mb-6">
-        <ChevronLeft size={16} /> Back to orders
-      </Link>
+      <div className="flex items-center justify-between mb-6 no-print">
+        <Link href="/admin/orders" className="inline-flex items-center gap-1 text-sm font-medium text-neutral-500 hover:text-[#623903]">
+          <ChevronLeft size={16} /> Back to orders
+        </Link>
+        <PrintButton />
+      </div>
 
+      <div id="print-area">
       <div className="flex flex-wrap items-end justify-between gap-3 mb-6">
         <div>
           <h1 className="text-2xl font-bold text-[#623903]">Order #{String(order.id).slice(0, 8)}</h1>
@@ -64,12 +69,14 @@ export default async function AdminOrderDetail({
         </Card>
 
         {/* Manager */}
-        <OrderManager
-          id={order.id}
-          status={order.status}
-          tracking={order.shipping?.tracking ?? ""}
-          payment={order.payment}
-        />
+        <div className="no-print">
+          <OrderManager
+            id={order.id}
+            status={order.status}
+            tracking={order.shipping?.tracking ?? ""}
+            payment={order.payment}
+          />
+        </div>
       </div>
 
       {/* Delivery details */}
@@ -100,6 +107,7 @@ export default async function AdminOrderDetail({
           )}
         </div>
       </Card>
+      </div>
     </div>
   );
 }
