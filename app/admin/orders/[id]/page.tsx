@@ -71,6 +71,35 @@ export default async function AdminOrderDetail({
           payment={order.payment}
         />
       </div>
+
+      {/* Delivery details */}
+      <Card className="mt-6">
+        <div className="p-6">
+          <h2 className="font-bold text-[#623903] mb-4">Delivery Details</h2>
+          {order.shipping && (order.shipping.name || order.shipping.address) ? (
+            <div className="grid sm:grid-cols-3 gap-x-8 gap-y-3 text-sm">
+              {[
+                ["Name", order.shipping.name],
+                ["Phone", order.shipping.phone],
+                ["Address", order.shipping.address],
+                ["Landmark", order.shipping.landmark],
+                ["District", order.shipping.district],
+                ["State", order.shipping.state],
+                ["Pincode", order.shipping.pincode],
+              ]
+                .filter(([, v]) => v)
+                .map(([label, value]) => (
+                  <div key={label as string}>
+                    <p className="text-[11px] uppercase tracking-wider text-neutral-400 font-bold">{label}</p>
+                    <p className="text-neutral-800 font-medium">{value}</p>
+                  </div>
+                ))}
+            </div>
+          ) : (
+            <p className="text-neutral-400 text-sm">No delivery details provided.</p>
+          )}
+        </div>
+      </Card>
     </div>
   );
 }
