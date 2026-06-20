@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { createPortal } from "react-dom";
 import { useRouter } from "next/navigation";
-import { MapPin, Plus, Check } from "lucide-react";
+import { Plus, Check } from "lucide-react";
 import { useCart } from "../lib/cart";
 import { useAuth } from "../app/context/AuthContext";
 
@@ -42,6 +42,7 @@ export default function CheckoutButton({
   const [view, setView] = useState<"select" | "form">("form");
   const [loading, setLoading] = useState(false);
   const [saved, setSaved] = useState<Address[]>([]);
+  const [selected, setSelected] = useState(0);
   const [form, setForm] = useState<Address>(EMPTY);
 
   const addrKey = () => `mello:addresses:${user?.email || "guest"}`;
@@ -72,6 +73,7 @@ export default function CheckoutButton({
     if (items.length === 0) return;
     const list = loadSaved();
     setSaved(list);
+    setSelected(0);
     if (list.length > 0) {
       setView("select");
     } else {
@@ -130,36 +132,42 @@ export default function CheckoutButton({
             {/* SELECT saved address */}
             {view === "select" && (
               <div className="space-y-3">
-                {saved.map((a, i) => (
-                  <div
-                    key={i}
-                    className="border border-neutral-200 rounded-xl p-4 hover:border-[#623903] transition"
-                  >
-                    <div className="flex items-start gap-3">
-                      <MapPin size={18} className="text-[#7a4a05] mt-0.5 shrink-0" />
-                      <div className="text-sm flex-1 min-w-0">
-                        <p className="font-bold text-[#623903]">
-                          {a.name} · {a.phone}
-                        </p>
-                        <p className="text-neutral-600 mt-0.5">
-                          {a.address}
-                          {a.landmark ? `, ${a.landmark}` : ""}
-                        </p>
-                        <p className="text-neutral-600">
-                          {a.district}, {a.state} - {a.pincode}
-                        </p>
-                      </div>
-                    </div>
+                {saved.map((a, i) => {
+                  const active = selected === i;
+                  return (
                     <button
-                      onClick={() => submitOrder(a)}
-                      disabled={loading}
-                      className="mt-3 w-full flex items-center justify-center gap-2 bg-[#623903] text-white py-2.5 rounded-lg font-bold hover:bg-[#7a4a05] transition disabled:opacity-50"
+                      key={i}
+                      type="button"
+                      onClick={() => setSelected(i)}
+                      className={`w-full text-left border rounded-xl p-4 transition ${
+                        active ? "border-[#623903] ring-1 ring-[#623903] bg-[#623903]/[0.03]" : "border-neutral-200 hover:border-neutral-300"
+                      }`}
                     >
-                      <Check size={16} />
-                      {loading ? "Placing order…" : `Deliver here · ₹${(total / 100).toFixed(0)}`}
+                      <div className="flex items-start gap-3">
+                        {/* Radio bullet */}
+                        <span
+                          className={`mt-0.5 w-5 h-5 rounded-full border-2 grid place-items-center shrink-0 ${
+                            active ? "border-[#623903]" : "border-neutral-300"
+                          }`}
+                        >
+                          {active && <span className="w-2.5 h-2.5 rounded-full bg-[#623903]" />}
+                        </span>
+                        <div className="text-sm flex-1 min-w-0">
+                          <p className="font-bold text-[#623903]">
+                            {a.name} · {a.phone}
+                          </p>
+                          <p className="text-neutral-600 mt-0.5">
+                            {a.address}
+                            {a.landmark ? `, ${a.landmark}` : ""}
+                          </p>
+                          <p className="text-neutral-600">
+                            {a.district}, {a.state} - {a.pincode}
+                          </p>
+                        </div>
+                      </div>
                     </button>
-                  </div>
-                ))}
+                  );
+                })}
 
                 <button
                   onClick={() => {
@@ -169,6 +177,15 @@ export default function CheckoutButton({
                   className="w-full flex items-center justify-center gap-2 border border-dashed border-neutral-300 text-[#623903] py-3 rounded-xl font-bold hover:bg-neutral-50 transition"
                 >
                   <Plus size={16} /> Add New Address
+                </button>
+
+                <button
+                  onClick={() => saved[selected] && submitOrder(saved[selected])}
+                  disabled={loading || !saved[selected]}
+                  className="w-full flex items-center justify-center gap-2 bg-[#623903] text-white py-3 rounded-xl font-bold hover:bg-[#7a4a05] transition disabled:opacity-50"
+                >
+                  <Check size={16} />
+                  {loading ? "Placing order…" : `Deliver here · ₹${(total / 100).toFixed(0)}`}
                 </button>
               </div>
             )}
