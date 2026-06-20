@@ -453,17 +453,16 @@ export default function StocksPage() {
                                         <label className="block text-sm font-medium text-gray-700 mb-1">Product Image</label>
                                         <div className="flex items-center gap-4">
                                             {formData.imageUrl && <img src={formData.imageUrl} alt="Preview" className="w-12 h-12 rounded object-cover border" />}
-                                            <label className="cursor-pointer bg-gray-100 hover:bg-gray-200 text-gray-700 px-4 py-2 rounded-lg text-sm font-medium transition">
+                                            <label className="cursor-pointer bg-gray-100 hover:bg-gray-200 text-gray-700 px-4 py-2 rounded-lg text-sm font-medium transition flex items-center gap-2">
+                                                {galleryUploading ? <Loader2 size={14} className="animate-spin" /> : null}
                                                 Choose File
-                                                <input type="file" className="hidden" accept="image/*" onChange={(e) => {
+                                                <input type="file" className="hidden" accept="image/*" onChange={async (e) => {
                                                     const file = e.target.files?.[0];
-                                                    if (file) {
-                                                        const reader = new FileReader();
-                                                        reader.onloadend = () => {
-                                                            setFormData(prev => ({ ...prev, imageUrl: reader.result as string }));
-                                                        };
-                                                        reader.readAsDataURL(file);
-                                                    }
+                                                    if (!file) return;
+                                                    setGalleryUploading(true);
+                                                    const url = await uploadToStorage(file);
+                                                    setGalleryUploading(false);
+                                                    if (url) setFormData(prev => ({ ...prev, imageUrl: url }));
                                                 }} />
                                             </label>
                                         </div>

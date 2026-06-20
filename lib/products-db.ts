@@ -90,19 +90,21 @@ export async function getProductBySlug(slug: string) {
       .order("created_at", { ascending: false });
 
     // Similar products from the same category (fall back to any others).
+    // Lightweight column set (skips heavy meta/about/technical fields).
+    const relCols = "id, slug, title, price, mrp, image_url, images, rating, reviews_count, badge, best_price_note, category, in_stock";
     let { data: related } = await supabase
       .from("products")
-      .select("*")
+      .select(relCols)
       .ilike("category", data.category ?? "")
       .neq("id", data.id)
-      .limit(8);
+      .limit(4);
 
     if (!related || related.length === 0) {
       const res = await supabase
         .from("products")
-        .select("*")
+        .select(relCols)
         .neq("id", data.id)
-        .limit(8);
+        .limit(4);
       related = res.data;
     }
 
