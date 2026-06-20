@@ -40,7 +40,7 @@ export default function Footer() {
             <a
               key={s.name}
               href="#"
-              className="flex items-center justify-center gap-2 border border-white/10 bg-white/5 hover:bg-white/10 hover:text-accent py-3 rounded text-sm font-semibold transition-all"
+              className="flex items-center justify-center gap-2 bg-secondary text-[#623903] hover:bg-accent hover:text-[#623903] py-3 rounded text-sm font-semibold transition-all"
             >
               {s.icon} {s.name}
             </a>
