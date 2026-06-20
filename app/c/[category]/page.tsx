@@ -9,11 +9,5 @@ export default async function DynamicCategoryPage({
   const pretty = decodeURIComponent(category);
   const title = pretty.charAt(0).toUpperCase() + pretty.slice(1);
 
-  return (
-    <ProductGrid
-      category={pretty}
-      title={`${title} Collection`}
-      titleClassName="text-4xl font-extrabold text-primary uppercase tracking-tighter text-center"
-    />
-  );
+  return <ProductGrid category={pretty} title={`${title} Collection`} />;
 }
