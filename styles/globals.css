@@ -5,7 +5,6 @@
 
 html,
 body {
-  height: 100%;
   overflow-x: clip;
   max-width: 100%;
 }
@@ -58,11 +57,6 @@ nav a:hover::after {
   border-color: var(--card-outline-weak);
   box-shadow: 0 6px 30px rgba(45, 44, 44, 0.341);
   transform: scale(1.01)
-}
-
-html,
-body {
-  height: 100%;
 }
 
 body {
