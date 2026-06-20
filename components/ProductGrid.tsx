@@ -7,8 +7,6 @@ type Props = {
   title: string;
   subtitle?: string;
   category?: string;
-  titleClassName?: string;
-  titleStyle?: React.CSSProperties;
   emptyText?: string;
 };
 
@@ -16,8 +14,6 @@ export default async function ProductGrid({
   title,
   subtitle,
   category,
-  titleClassName = "text-2xl font-extrabold text-primary",
-  titleStyle,
   emptyText = "No products here yet. Check back soon.",
 }: Props) {
   const products = await getProducts(category ? { category } : {});
@@ -25,13 +21,14 @@ export default async function ProductGrid({
   return (
     <section className="relative left-1/2 right-1/2 -ml-[50vw] -mr-[50vw] w-screen">
       <div className="max-w-[1600px] mx-auto px-5 lg:px-10 py-10 grid gap-6">
-        <h2 className={titleClassName} style={titleStyle}>
-          {title}
-        </h2>
-
-        {subtitle && (
-          <p className="text-center text-neutral-500 -mt-2">{subtitle}</p>
-        )}
+        <div className="text-center max-w-3xl mx-auto">
+          <h2 className="text-3xl md:text-4xl font-black uppercase tracking-tight text-[#623903]">
+            {title}
+          </h2>
+          {subtitle && (
+            <p className="text-neutral-500 mt-3">{subtitle}</p>
+          )}
+        </div>
 
         {products.length === 0 ? (
           <p className="text-neutral-400 text-center py-16">{emptyText}</p>
