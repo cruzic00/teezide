@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useCart } from "../../lib/cart";
 import CheckoutButton from "../../components/CheckoutButton";
+import RecentlyViewed from "../../components/RecentlyViewed";
 
 export default function CartPage() {
   const { items, total, removeItem, updateQty, clear } = useCart();
@@ -71,6 +72,8 @@ export default function CartPage() {
           </button>
         </>
       )}
+
+      <RecentlyViewed />
     </section>
   );
 }

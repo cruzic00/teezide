@@ -6,6 +6,7 @@ import { getProductBySlug } from "../../../lib/products-db";
 import Link from "next/link";
 import ReviewForm from "./parts/ReviewForm";
 import ShareButton from "./parts/ShareButton";
+import TrackView from "../../../components/TrackView";
 
 type Props = {
   params: Promise<{ slug: string }>;
@@ -21,6 +22,20 @@ export default async function ProductDetail({ params }: Props) {
 
   return (
     <div className="relative left-1/2 right-1/2 -ml-[50vw] -mr-[50vw] w-screen">
+      <TrackView
+        item={{
+          id: String(product.id ?? product._id ?? product.slug),
+          slug: product.slug,
+          name: product.name,
+          price: product.price,
+          mrp: product.mrp,
+          image: product.image,
+          rating: product.rating,
+          reviews: product.reviews,
+          badge: product.badge,
+          category: product.category,
+        }}
+      />
       <div className="max-w-[1500px] mx-auto px-6 lg:px-12">
       <section className="grid gap-10 md:grid-cols-2 py-12">
         {/* IMAGE GALLERY */}
