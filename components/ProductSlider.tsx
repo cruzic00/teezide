@@ -51,7 +51,7 @@ export default function ProductSlider({ products }: { products: any[] }) {
 
       <div
         ref={ref}
-        className="flex gap-4 overflow-x-auto scrollbar-hide snap-x snap-mandatory pb-2 px-1"
+        className="flex gap-4 overflow-x-auto scrollbar-hide snap-x snap-mandatory py-4 px-2"
       >
         {products.map((p) => (
           <div key={p.id} className="snap-start shrink-0 w-[68vw] sm:w-60 lg:w-72">
