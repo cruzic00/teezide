@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { createPortal } from "react-dom";
 import { useRouter } from "next/navigation";
 import { MapPin, Plus, Check } from "lucide-react";
 import { useCart } from "../lib/cart";
@@ -110,8 +111,8 @@ export default function CheckoutButton({
         {label}
       </button>
 
-      {open && (
-        <div className="fixed inset-0 z-50 bg-black/60 grid place-items-center p-4">
+      {open && typeof document !== "undefined" && createPortal(
+        <div className="fixed inset-0 z-[100] bg-black/60 grid place-items-center p-4">
           <div className="bg-white rounded-2xl w-full max-w-lg p-6 space-y-4 max-h-[92vh] overflow-y-auto">
             <div className="flex items-center justify-between">
               <h3 className="text-xl font-bold text-[#623903]">
@@ -155,7 +156,7 @@ export default function CheckoutButton({
                       className="mt-3 w-full flex items-center justify-center gap-2 bg-[#623903] text-white py-2.5 rounded-lg font-bold hover:bg-[#7a4a05] transition disabled:opacity-50"
                     >
                       <Check size={16} />
-                      {loading ? "Placing order…" : `Deliver here · ₹${(total / 100).toFixed(0)} (COD)`}
+                      {loading ? "Placing order…" : `Deliver here · ₹${(total / 100).toFixed(0)}`}
                     </button>
                   </div>
                 ))}
@@ -198,7 +199,7 @@ export default function CheckoutButton({
                   disabled={loading}
                   className="w-full bg-[#623903] text-white py-3 rounded-lg font-bold hover:bg-[#7a4a05] transition disabled:opacity-50"
                 >
-                  {loading ? "Placing order…" : `Place Order · ₹${(total / 100).toFixed(0)} (COD)`}
+                  {loading ? "Placing order…" : `Place Order · ₹${(total / 100).toFixed(0)}`}
                 </button>
 
                 {saved.length > 0 && (
@@ -226,7 +227,8 @@ export default function CheckoutButton({
               </form>
             )}
           </div>
-        </div>
+        </div>,
+        document.body
       )}
     </>
   );
